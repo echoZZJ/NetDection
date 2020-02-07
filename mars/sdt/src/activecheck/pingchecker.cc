@@ -69,7 +69,9 @@ void PingChecker::__DoCheck(CheckRequestProfile& _check_request) {
 
 			uint64_t start_time = gettickcount();
 			PingQuery ping_query;
-			int ret = ping_query.RunPingQuery(0, 0, (UNUSE_TIMEOUT == _check_request.total_timeout ? 0 : _check_request.total_timeout / 1000), host.c_str());
+//   testzzj0         return :-1 no send all packets
+//         0 send all packets
+			int ret = ping_query.RunPingQuery(1, 0, (UNUSE_TIMEOUT == _check_request.total_timeout ? 0 : _check_request.total_timeout / 1000), host.c_str());
 			uint64_t cost_time = gettickcount() - start_time;
 
 			profile.error_code = ret;
@@ -125,7 +127,7 @@ void PingChecker::__DoCheck(CheckRequestProfile& _check_request) {
 
 			uint64_t start_time = gettickcount();
 			PingQuery ping_query;
-			int ret = ping_query.RunPingQuery(0, 0, (UNUSE_TIMEOUT == _check_request.total_timeout ? 0 : _check_request.total_timeout / 1000), host.c_str());
+			int ret = ping_query.RunPingQuery(1, 0, (UNUSE_TIMEOUT == _check_request.total_timeout ? 0 : _check_request.total_timeout / 1000), host.c_str());
 			uint64_t cost_time = gettickcount() - start_time;
 
 			profile.error_code = ret;

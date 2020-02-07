@@ -223,6 +223,7 @@ int socket_gethostbyname(const char* _host, socket_ipinfo_t* _ipinfo, int _timeo
 
         if (0 >= _ipinfo->size) {  // unkown host, dns->rcode == 3
             xerror2(TSF"unknown host.");
+            //如果直接指向ip的话会报错unknown host
             break;
         }
 

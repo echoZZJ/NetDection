@@ -40,10 +40,11 @@
 - (void)createMars;
 
 - (void)setClientVersion:(UInt32)clientVersion;
-- (void)setShortLinkDebugIP:(NSString *)IP port:(const unsigned short)port;
-- (void)setShortLinkPort:(const unsigned short)port;
+//- (void)setShortLinkDebugIP:(NSString *)IP port:(const unsigned short)port;
+//- (void)setShortLinkPort:(const unsigned short)port;
 - (void)setLongLinkAddress:(NSString *)string port:(const unsigned short)port debugIP:(NSString *)IP;
 - (void)setLongLinkAddress:(NSString *)string port:(const unsigned short)port;
+- (void)setShortLinkHosts:(NSArray<NSString *> *)hosts ports:(NSArray<NSNumber *> *)ports;
 - (void)makesureLongLinkConnect;
 - (void)destroyMars;
 
@@ -65,6 +66,10 @@
 - (NSInteger)OnTaskEndWithTaskID:(uint32_t)tid userContext:(const void *)context errType:(uint32_t)errtype errCode:(uint32_t)errcode;
 - (void)OnConnectionStatusChange:(int32_t)status longConnStatus:(int32_t)longConnStatus;
 
+
+- (void)startNetSniffering;
+- (void)clearNetLink;
+- (void)setUpLocalHost;
 @end
 
 #endif /* NetworkService_hpp */

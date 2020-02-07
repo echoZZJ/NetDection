@@ -40,6 +40,7 @@
 #include "stn/src/net_source.h"
 #include "stn/src/signalling_keeper.h"
 #include "stn/src/proxy_test.h"
+#include "stn/src/net_check_logic.h"
 
 #ifdef WIN32
 #include <locale>
@@ -221,6 +222,11 @@ bool (*ProxyIsAvailable)(const mars::comm::ProxyInfo& _proxy_info, const std::st
 //	SetLonglinkSvrAddr(host, ports, "");
 //};
 
+void (*StartNetWorkSniffering)()
+=[](){
+    NetCheckLogic().__StartNetCheck();
+};
+
 
 void (*SetLonglinkSvrAddr)(const std::string& host, const std::vector<uint16_t> ports, const std::string& debugip)
 = [](const std::string& host, const std::vector<uint16_t> ports, const std::string& debugip) {
@@ -239,6 +245,18 @@ void (*SetLonglinkSvrAddr)(const std::string& host, const std::vector<uint16_t> 
 void (*SetShortlinkSvrAddr)(const uint16_t port, const std::string& debugip)
 = [](const uint16_t port, const std::string& debugip) {
 	NetSource::SetShortlink(port, debugip);
+};
+
+void (*SetShortlinkSvrAddrs)(const std::vector<std::string>& hosts, const std::vector<uint16_t> ports, const std::string& debugip)
+= [](const std::vector<std::string>& hosts, const std::vector<uint16_t> ports, const std::string& debugip){
+//    std::vector<std::string> hosts;
+//    if (!host.empty()) {
+//        hosts.push_back(host);
+//    }
+    if(!hosts.empty()){
+        NetSource::SetShortLinks(hosts, ports, debugip);
+    }
+    
 };
 
 void (*SetDebugIP)(const std::string& host, const std::string& ip)
@@ -370,6 +388,7 @@ void (*RequestSync)()
 
 void (*RequestNetCheckShortLinkHosts)(std::vector<std::string>& _hostlist)
 = [](std::vector<std::string>& _hostlist) {
+    
 };
 
 void (*ReportTaskProfile)(const TaskProfile& _task_profile)

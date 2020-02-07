@@ -244,9 +244,10 @@ void NetCheckLogic::__StartNetCheck() {
 
 	//shortlink check map
 	CheckIPPorts shortlink_check_items;
-	std::vector<std::string> shortlink_hostlist;
-	RequestNetCheckShortLinkHosts(shortlink_hostlist);
-	uint16_t shortlink_port = NetSource::GetShortLinkPort();
+    std::vector<std::string> shortlink_hostlist = NetSource::GetShortLinkHosts();
+//	RequestNetCheckShortLinkHosts(shortlink_hostlist);
+//	uint16_t shortlink_port = NetSource::GetShortLinkPort();
+    std::vector<uint16_t> shortlink_ports = NetSource::GetShortlinkPorts();
 
 
 	for (std::vector<std::string>::iterator iter = shortlink_hostlist.begin(); iter != shortlink_hostlist.end(); ++iter) {
@@ -261,14 +262,16 @@ void NetCheckLogic::__StartNetCheck() {
 
 		std::vector<CheckIPPort> check_ipport_list;
 		for (std::vector<std::string>::iterator ip_iter = shortlink_iplist.begin(); ip_iter != shortlink_iplist.end(); ++ip_iter) {
-			CheckIPPort ipport_item(*ip_iter, shortlink_port);
-			check_ipport_list.push_back(ipport_item);
+            for (std::vector<uint16_t>::iterator iter = shortlink_ports.begin(); iter != shortlink_ports.end(); ++iter) {
+                CheckIPPort ipport_item(*ip_iter, *iter);
+                check_ipport_list.push_back(ipport_item);
+            }
 		}
-
 		if (!check_ipport_list.empty()) shortlink_check_items.insert(std::pair< std::string, std::vector<CheckIPPort> >(*iter, check_ipport_list));
 	}
 
-
-    int mode = (NET_CHECK_BASIC | NET_CHECK_LONG | NET_CHECK_SHORT);
+    int mode = NET_CHECK_SHORT;
+//    int mode = (NET_CHECK_BASIC | NET_CHECK_LONG | NET_CHECK_SHORT);
+	xinfo2(TSF"net check mode is %_",mode);
     if (!longlink_check_items.empty() || !shortlink_check_items.empty()) StartActiveCheck(longlink_check_items, shortlink_check_items, mode, UNUSE_TIMEOUT);
 }

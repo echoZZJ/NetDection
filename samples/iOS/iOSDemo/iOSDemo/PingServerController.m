@@ -49,9 +49,14 @@
 }
 
 - (IBAction)onButtonClick:(id)sender forEvent:(UIEvent *)event {
-    CGITask *helloCGI = [[CGITask alloc] initAll:ChannelType_All AndCmdId:kSayHello AndCGIUri:@"/mars/hello" AndHost:@"www.marsopen.cn"];
-    [[NetworkService sharedInstance] startTask:helloCGI ForUI:self];
+//    CGITask *helloCGI = [[CGITask alloc] initAll:ChannelType_All AndCmdId:kSayHello AndCGIUri:@"/cgi-bin/micromsg-bin/newinit" AndHost:@"long.weixin.qq.com"];
+//    [[NetworkService sharedInstance] startTask:helloCGI ForUI:self];
+    [[NetworkService sharedInstance] createMars];
+    //检测网络状态
+    [[NetworkStatus sharedInstance] Start:[NetworkService sharedInstance]];
+    [[NetworkService sharedInstance] startNetSniffering];
 }
+
 
 - (NSData*)requestSendData {
     HelloRequest *helloRequest = [HelloRequest new];

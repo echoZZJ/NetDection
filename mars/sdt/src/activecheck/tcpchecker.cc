@@ -95,7 +95,7 @@ void TcpChecker::__DoCheck(CheckRequestProfile& _check_request) {
 					_check_request.checkresult_profiles.push_back(profile);
 					continue;
 				} else {
-					uint32_t cmdid = 0, seq = 0; size_t packlen = 0; AutoBuffer recv_body;
+					uint32_t cmdid = longlink_noop_cmdid(), seq = 0; size_t packlen = 0; AutoBuffer recv_body;
 					profile.rtt = cost_time;
 					if (!__NoopResp(recv_buff, cmdid, seq, packlen, recv_body)) {	//not noop resp
 						profile.error_code = kTcpRespErr;

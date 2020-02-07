@@ -70,6 +70,9 @@ class NetSource {
     //set longlink host and ports
     static void SetLongLink(const std::vector<std::string>& _hosts, const std::vector<uint16_t>& _ports, const std::string& _debugip);
     //set shortlink port
+    
+    static void SetShortLinks(const std::vector<std::string>& _hosts, const std::vector<uint16_t>& _ports, const std::string& _debugip);
+    
     static void SetShortlink(const uint16_t _port, const std::string& _debugip);
     //set backup ips for host, these ips would be used when host dns failed
     static void SetBackupIPs(const std::string& _host, const std::vector<std::string>& _ips);
@@ -82,7 +85,11 @@ class NetSource {
 
     static void GetLonglinkPorts(std::vector<uint16_t>& _ports);
     static const std::vector<std::string>& GetLongLinkHosts();
+    
     static uint16_t GetShortLinkPort();
+    
+    static const std::vector<std::string>& GetShortLinkHosts();
+    static std::vector<uint16_t> GetShortlinkPorts();
     
     static void GetBackupIPs(std::string _host, std::vector<std::string>& _iplist);
 

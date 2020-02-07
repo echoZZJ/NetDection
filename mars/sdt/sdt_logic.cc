@@ -65,6 +65,7 @@ BOOT_RUN_STARTUP(__initbind_baseprjevent);
 
 //active netcheck interface
 void StartActiveCheck(CheckIPPorts& _longlink_check_items, CheckIPPorts& _shortlink_check_items, int _mode, int _timeout) {
+    xinfo2("StartActiveCheck");
 	SDT_WEAK_CALL(StartCheck(_longlink_check_items, _shortlink_check_items, _mode, _timeout));
 }
 

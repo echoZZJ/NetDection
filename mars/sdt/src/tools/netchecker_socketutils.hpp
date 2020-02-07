@@ -404,12 +404,17 @@ public:
 				if (nrecv < 0)
 				{
 					xerror2(TSF"readnWithNonBlock readn nrecv < 0, errno:%0", strerror(errcode));
-					return kSelectErr;
+                    if (errcode != ECONNRESET) {
+                        costMs += (gettickcount() - startMs);
+                        //从wireshak 抓包情况来看在给halo发送心跳包时完成三次握手后服务端会发送RST ACK包断开连接
+                       return kTcpSucc;
+                    }
+                    return kTcpNonErr;
 				}
 				else if (nrecv == 0)
 				{
 					xinfo2(TSF"nrecv==0, socket close:%0", errno);
-					return kTcpNonErr;
+                    return kTcpNonErr;
 				}
                 
 				recvBuf.Length(nrecv + recvBuf.Pos(), nrecv + recvBuf.Pos());
@@ -421,6 +426,7 @@ public:
 				}
 			}
 			costMs += (gettickcount() - startMs);
+            return kTcpSucc;
 		}
 		return kTcpSucc;
 	}

@@ -80,13 +80,15 @@ namespace stn{
 
 //    extern void SetLonglinkSvrAddr(const std::string& host, const std::vector<uint16_t> ports);
 //    extern void SetShortlinkSvrAddr(const uint16_t port);
-    
+    extern void (*StartNetWorkSniffering)();
 
     // 'host' will be ignored when 'debugip' is not empty.
 	extern void (*SetLonglinkSvrAddr)(const std::string& host, const std::vector<uint16_t> ports, const std::string& debugip);
     
     // 'task.host' will be ignored when 'debugip' is not empty.
 	extern void (*SetShortlinkSvrAddr)(const uint16_t port, const std::string& debugip);
+
+    extern void (*SetShortlinkSvrAddrs)(const std::vector<std::string>& hosts, const std::vector<uint16_t> ports, const std::string& debugip);
     
     // setting debug ip address for the corresponding host
 	extern void (*SetDebugIP)(const std::string& host, const std::string& ip);

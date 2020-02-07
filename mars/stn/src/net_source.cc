@@ -51,7 +51,9 @@ static std::vector<std::string> sg_longlink_hosts;
 static std::vector<uint16_t> sg_longlink_ports;
 static std::string sg_longlink_debugip;
 
+static std::vector<std::string> sg_shortlink_hosts;
 static int sg_shortlink_port;
+static std::vector<uint16_t> sg_shortlink_ports;
 static std::string sg_shortlink_debugip;
 static std::map< std::string, std::vector<std::string> > sg_host_backupips_mapping;
 static std::vector<uint16_t> sg_lowpriority_longlink_ports;
@@ -111,6 +113,30 @@ void NetSource::SetLongLink(const std::vector<std::string>& _hosts, const std::v
     	xerror2(TSF"host list should not be empty");
     }
 	sg_longlink_ports = _ports;
+}
+
+
+void NetSource::SetShortLinks(const std::vector<std::string>& _hosts, const std::vector<uint16_t>& _ports, const std::string& _debugip) {
+    ScopedLock lock(sg_ip_mutex);
+
+    xgroup2_define(addr_print);
+    xinfo2(TSF"task set shortlink server addr, ") >> addr_print;
+    for (std::vector<std::string>::const_iterator host_iter = _hosts.begin(); host_iter != _hosts.end(); ++host_iter) {
+        xinfo2(TSF "host:%_ ", *host_iter) >> addr_print;
+    }
+    for (std::vector<uint16_t>::const_iterator port_iter = _ports.begin(); port_iter != _ports.end(); ++port_iter) {
+        xinfo2(TSF "port:%_ ", *port_iter) >> addr_print;
+    }
+    xinfo2(TSF"debugip:%_", _debugip) >> addr_print;
+
+    sg_shortlink_debugip = _debugip;
+    if (!_hosts.empty()) {
+        sg_shortlink_hosts = _hosts;
+    }
+    else {
+        xerror2(TSF"host list should not be empty");
+    }
+    sg_shortlink_ports = _ports;
 }
 
 void NetSource::SetShortlink(const uint16_t _port, const std::string& _debugip) {
@@ -258,6 +284,16 @@ uint16_t NetSource::GetShortLinkPort() {
 	ScopedLock lock(sg_ip_mutex);
 	return sg_shortlink_port;
 }
+std::vector<uint16_t> NetSource::GetShortlinkPorts() {
+    ScopedLock lock(sg_ip_mutex);
+    return sg_shortlink_ports;
+}
+
+const std::vector<std::string>& NetSource::GetShortLinkHosts() {
+    ScopedLock lock(sg_ip_mutex);
+    return sg_shortlink_hosts;
+}
+
 
 bool NetSource::__HasShortLinkDebugIP(const std::vector<std::string>& _hostlist) {
 	if (!sg_shortlink_debugip.empty()) {

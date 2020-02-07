@@ -119,6 +119,7 @@ static void __GetIP() {
             sg_condition.notifyAll();
             return;
         } else {
+//            lock.lock();
             if (iter == sg_dnsinfo_vec.end()) {
                 freeaddrinfo(result);
                 return;

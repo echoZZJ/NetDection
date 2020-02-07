@@ -56,6 +56,14 @@ void SetClientVersion(uint32_t _client_version)  {
 
 static int __unpack_test(const void* _packed, size_t _packed_len, uint32_t& _cmdid, uint32_t& _seq, size_t& _package_len, size_t& _body_len) {
     __STNetMsgXpHeader st = {0};
+    
+    uint32_t thead_len = ntohl(st.head_length);
+    uint32_t tbody_len = ntohl(st.body_length);
+    uint32_t tpackage_len = thead_len + tbody_len;
+    if (tpackage_len == _packed_len && _packed_len == 0) {
+        //tcpcheck心跳包发送
+        return LONGLINK_UNPACK_OK;
+    }
     if (_packed_len < sizeof(__STNetMsgXpHeader)) {
         _package_len = 0;
         _body_len = 0;
@@ -134,7 +142,7 @@ uint32_t (*signal_keep_cmdid)()
 
 void (*longlink_noop_req_body)(AutoBuffer& _body, AutoBuffer& _extend)
 = [](AutoBuffer& _body, AutoBuffer& _extend) {
-    
+//    port_ = (uint16_t)atoi(hoststr.substr(portstart + 1).c_str());
 };
     
 void (*longlink_noop_resp_body)(const AutoBuffer& _body, const AutoBuffer& _extend)

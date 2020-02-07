@@ -37,6 +37,7 @@ class NetCheckLogic {
   public:
     NetCheckLogic();
     ~NetCheckLogic();
+    void __StartNetCheck();
 
     void UpdateLongLinkInfo(unsigned int _continues_fail_count, bool _task_succ);
     void UpdateShortLinkInfo(unsigned int _continue_fail_count, bool _task_succ);
@@ -50,7 +51,7 @@ class NetCheckLogic {
 
   private:
     bool __ShouldNetCheck();
-    void __StartNetCheck();
+    
 
   private:
 

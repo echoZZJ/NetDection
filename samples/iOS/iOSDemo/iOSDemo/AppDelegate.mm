@@ -38,14 +38,23 @@
     
     [NetworkService sharedInstance].delegate = [[NetworkEvent alloc] init];
     [[NetworkService sharedInstance] setCallBack];
-    [[NetworkService sharedInstance] createMars];
+   
     [[NetworkService sharedInstance] setClientVersion:200];
-    [[NetworkService sharedInstance] setLongLinkAddress:@"www.marsopen.cn" port:8081];
-    [[NetworkService sharedInstance] setShortLinkPort:8080];
-    [[NetworkService sharedInstance] reportEvent_OnForeground:YES];
-    [[NetworkService sharedInstance] makesureLongLinkConnect];
+//116.85.2.13   
+    [[NetworkService sharedInstance] setLongLinkAddress:@"rtm-dichat.xiaojukeji.com" port:5230];
+//    [[NetworkService sharedInstance] setLongLinkAddress:@"long.weixin.qq.com" port:80];
+//    [[NetworkService sharedInstance] setLongLinkAddress:@"localhost" port:8081 debugIP:@"127.0.0.1"];
+//    [[NetworkService sharedInstance] setShortLinkPort:8080];
     
-    [[NetworkStatus sharedInstance] Start:[NetworkService sharedInstance]];
+    
+    
+//    [[NetworkService sharedInstance] setShortLinkHosts:@[@"dichat-file.s3.didiyunapi.com",@"dichat-public.s3.didiyunapi.com",
+//    @"dichat-bifrost.xiaojukeji.com",@"im-dichat.xiaojukeji.com"] ports:@[@(443),@(80)]];
+    
+    [[NetworkService sharedInstance] setShortLinkHosts:@[@"dichat-file.s3.didiyunapi.com"] ports:@[@(443),@(80)]];
+//    [[NetworkService sharedInstance] reportEvent_OnForeground:YES];
+//    [[NetworkService sharedInstance] makesureLongLinkConnect];
+
     
     return YES;
 }

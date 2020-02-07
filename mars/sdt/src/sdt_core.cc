@@ -71,30 +71,35 @@ void SdtCore::StartCheck(CheckIPPorts& _longlink_items, CheckIPPorts& _shortlink
 }
 
 void SdtCore::__InitCheckReq(CheckIPPorts& _longlink_items, CheckIPPorts& _shortlink_items, int _mode, int _timeout) {
-	xverbose_function();
+	xinfo_function();
 	checking_ = true;
 
 	check_request_.Reset();
 	check_request_.longlink_items.insert(_longlink_items.begin(), _longlink_items.end());
+    check_request_.shortlink_items.insert(_shortlink_items.begin(), _shortlink_items.end());
 	check_request_.mode = _mode;
 	check_request_.total_timeout = _timeout;
-
+    
     if (MODE_BASIC(_mode)) {
+        xinfo2(TSF"__InitCheckReq MODE_BASIC");
         PingChecker* ping_checker = new PingChecker();
         check_list_.push_back(ping_checker);
         DnsChecker* dns_checker = new DnsChecker();
         check_list_.push_back(dns_checker);
+        xinfo2(TSF"MODE_BASIC  checkList is %_",check_list_.size());
     }
-
     if (MODE_SHORT(_mode)) {
-    	check_request_.shortlink_items.insert(_shortlink_items.begin(), _shortlink_items.end());
+        xinfo2(TSF"__InitCheckReq MODE_SHORT");
+//    	check_request_.shortlink_items.insert(_shortlink_items.begin(), _shortlink_items.end());
         HttpChecker* http_checker = new HttpChecker();
         check_list_.push_back(http_checker);
+        xinfo2(TSF"MODE_SHORT  checkList is %_",check_list_.size());
     }
-
     if (MODE_LONG(_mode)) {
+        xinfo2(TSF"__InitCheckReq MODE_LONG");
         TcpChecker* tcp_checker = new TcpChecker();
         check_list_.push_back(tcp_checker);
+        xinfo2(TSF"MODE_LONG  checkList is %_",check_list_.size());
     }
 }
 
@@ -121,9 +126,14 @@ void SdtCore::__RunOn() {
     xinfo_function();
 
     for (std::list<BaseChecker*>::iterator iter = check_list_.begin(); iter != check_list_.end(); ++iter) {
-        if (cancel_ || check_request_.check_status == kCheckFinish)
+        if (cancel_) {
+            xinfo2(TSF"check_request cancel");
             break;
-
+        }
+        if (check_request_.check_status == kCheckFinish){
+            xinfo2(TSF"check_request finish");
+            break;
+        }
         (*iter)->StartDoCheck(check_request_);
     }
 

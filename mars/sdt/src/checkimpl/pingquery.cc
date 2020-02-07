@@ -631,6 +631,7 @@ void PingQuery::__onAlarm() {
 // return :-1 no send all packets
 //         0 send all packets
 int PingQuery::__runReadWrite(int& _errcode) {
+    xinfo_function();
     unsigned long timeout_point = timeout_ * 1000 + gettickcount();
     unsigned long send_next = 0;
     
@@ -770,6 +771,7 @@ int PingQuery::RunPingQuery(int _querycount, int _interval/*S*/, int _timeout/*S
 }
 
 int PingQuery::GetPingStatus(struct PingStatus& _ping_status) {
+    xinfo_function();
     clearPingStatus(_ping_status);
     int size = (int)vecrtts_.size();
 
@@ -821,6 +823,7 @@ int PingQuery::GetPingStatus(struct PingStatus& _ping_status) {
 
 
 int doPing(const std::string& _destaddr, std::string& _real_pingip, std::string& _resultstr, unsigned int _packet_size, int _pingcount, int _interval/*s*/, int _timeout/*s*/) {
+    xinfo_function();
     PingQuery pingObj;
     int ret = pingObj.RunPingQuery(_pingcount, _interval, _timeout, _destaddr.c_str(), _packet_size);
 
@@ -842,7 +845,7 @@ int doPing(const std::string& _destaddr, std::string& _real_pingip, std::string&
 
     _resultstr.append(ping_status.res);
 
-    xdebug2(TSF"realPingIP=%0,resultStr=%1,destAddr=%2", _real_pingip.c_str(), _resultstr.c_str(), _destaddr.c_str());
+    xinfo2(TSF"realPingIP=%0,resultStr=%1,destAddr=%2", _real_pingip.c_str(), _resultstr.c_str(), _destaddr.c_str());
 
     return ret2;
 }

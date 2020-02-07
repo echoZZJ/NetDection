@@ -79,9 +79,22 @@ static NetworkService * sharedSingleton = nil;
     mars::stn::SetShortlinkSvrAddr(port, ipAddress);
 }
 
-- (void)setShortLinkPort:(const unsigned short)port {
-    mars::stn::SetShortlinkSvrAddr(port, "");
+- (void)setShortLinkHosts:(NSArray<NSString *> *)hosts ports:(NSArray<NSNumber *> *)ports {
+    std::vector<std::string> iHosts;
+    std::vector<uint16_t> iPorts;
+    for (NSString *hostItem in hosts) {
+        iHosts.push_back(std::string([hostItem UTF8String]));
+    }
+    for (NSNumber* porsItem in ports) {
+        const unsigned short iPort = [porsItem unsignedShortValue];
+        iPorts.push_back(iPort);
+    }
+    mars::stn::SetShortlinkSvrAddrs(iHosts,iPorts,"");
 }
+
+//- (void)setShortLinkPort:(const unsigned short)port {
+//    mars::stn::SetShortlinkSvrAddr(port, "");
+//}
 
 - (void)setLongLinkAddress:(NSString *)string port:(const unsigned short)port debugIP:(NSString *)IP {
     std::string ipAddress([string UTF8String]);
@@ -182,6 +195,15 @@ static NetworkService * sharedSingleton = nil;
     }
     
 }
-
+- (void)startNetSniffering {
+    mars::stn:: StartNetWorkSniffering();
+}
+- (void)clearNetLink {
+    printf("testzzj longlink connect status %d",mars::stn::LongLinkIsConnected());
+    
+}
+- (void)setUpLocalHost {
+    mars::stn::SetDebugIP("localhost","127.0.0.1");
+}
 @end
 
