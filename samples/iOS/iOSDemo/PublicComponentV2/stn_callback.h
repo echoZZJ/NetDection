@@ -21,7 +21,7 @@
 #ifndef STNCALLBACK_h
 #define STNCALLBACK_h
 
-#import <mars/stn/stn_logic.h>
+#import <mars/stn/t_stn_logic.h>
 
 #import "NetworkService.h"
 

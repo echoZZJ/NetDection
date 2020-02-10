@@ -1,25 +1,12 @@
-// Tencent is pleased to support the open source community by making Mars available.
-// Copyright (C) 2016 THL A29 Limited, a Tencent company. All rights reserved.
+//
+//  t_net_source.h
+//  stn
+//
+//  Created by didi on 2020/2/8.
+//
 
-// Licensed under the MIT License (the "License"); you may not use this file except in 
-// compliance with the License. You may obtain a copy of the License at
-// http://opensource.org/licenses/MIT
-
-// Unless required by applicable law or agreed to in writing, software distributed under the License is
-// distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
-// either express or implied. See the License for the specific language governing permissions and
-// limitations under the License.
-
-
-/*
- * netsource.h
- *
- *  Created on: 2012-7-17
- *      Author: yerungui
- */
-
-#ifndef STN_SRC_NETSOURCE_H_
-#define STN_SRC_NETSOURCE_H_
+#ifndef t_net_source_h
+#define t_net_source_h
 
 #include <vector>
 #include <string>
@@ -32,7 +19,7 @@
 #include "mars/comm/dns/dns.h"
 #include "mars/stn/config.h"
 
-#include "simple_ipport_sort.h"
+//#include "simple_ipport_sort.h"
 
 class ActiveLogic;
 
@@ -45,12 +32,12 @@ class NetSource {
   public:
     class DnsUtil {
     public:
-    	DnsUtil();
+        DnsUtil();
         ~DnsUtil();
         
     public:
-        DNS& GetNewDNS() {	return new_dns_;}
-        DNS& GetDNS() {	return dns_;}
+        DNS& GetNewDNS() {    return new_dns_;}
+        DNS& GetDNS() {    return dns_;}
 
         void Cancel(const std::string& host = "");
         
@@ -81,7 +68,7 @@ class NetSource {
     static const std::string& GetLongLinkDebugIP();
     static const std::string& GetShortLinkDebugIP();
     
-    static void SetLowPriorityLonglinkPorts(const std::vector<uint16_t>& _lowpriority_longlink_ports);
+//    static void SetLowPriorityLonglinkPorts(const std::vector<uint16_t>& _lowpriority_longlink_ports);
 
     static void GetLonglinkPorts(std::vector<uint16_t>& _ports);
     static const std::vector<std::string>& GetLongLinkHosts();
@@ -93,7 +80,7 @@ class NetSource {
     
     static void GetBackupIPs(std::string _host, std::vector<std::string>& _iplist);
 
-    static std::string DumpTable(const std::vector<IPPortItem>& _ipport_items);
+//    static std::string DumpTable(const std::vector<IPPortItem>& _ipport_items);
     
   public:
     NetSource(ActiveLogic& _active_logic);
@@ -106,17 +93,17 @@ class NetSource {
     // for short link
     bool GetShortLinkItems(const std::vector<std::string>& _hostlist, std::vector<IPPortItem>& _ipport_items, DnsUtil& _dns_util);
 
-    void AddServerBan(const std::string& _ip);
+//    void AddServerBan(const std::string& _ip);
     
-    void ClearCache();
+//    void ClearCache();
 
-    void ReportLongIP(bool _is_success, const std::string& _ip, uint16_t _port);
-    void ReportShortIP(bool _is_success, const std::string& _ip, const std::string& _host, uint16_t _port);
-
-    void RemoveLongBanIP(const std::string& _ip);
-
-    bool GetLongLinkSpeedTestIPs(std::vector<IPPortItem>& _ip_vec);
-    void ReportLongLinkSpeedTestResult(std::vector<IPPortItem>& _ip_vec);
+//    void ReportLongIP(bool _is_success, const std::string& _ip, uint16_t _port);
+//    void ReportShortIP(bool _is_success, const std::string& _ip, const std::string& _host, uint16_t _port);
+//
+//    void RemoveLongBanIP(const std::string& _ip);
+//
+//    bool GetLongLinkSpeedTestIPs(std::vector<IPPortItem>& _ip_vec);
+//    void ReportLongLinkSpeedTestResult(std::vector<IPPortItem>& _ip_vec);
 
   private:
     
@@ -130,11 +117,10 @@ class NetSource {
 
   private:
     ActiveLogic&        active_logic_;
-    SimpleIPPortSort    ipportstrategy_;
+//    SimpleIPPortSort    ipportstrategy_;
 };
         
     }
 }
 
-
-#endif // STN_SRC_NETSOURCE_H_
+#endif /* t_net_source_h */

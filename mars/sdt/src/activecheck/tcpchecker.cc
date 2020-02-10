@@ -19,7 +19,7 @@
 //
 #include "tcpchecker.h"
 
-#include "mars/stn/stn_logic.h"
+#include "mars/stn/t_stn_logic.h"
 
 #include "mars/comm/singleton.h"
 #include "mars/comm/xlogger/xlogger.h"

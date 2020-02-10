@@ -21,7 +21,7 @@ COMM_COPY_HEADER_FILES = {
             "mars/comm/objc/scope_autoreleasepool.h": "comm",
             "mars/comm/objc/ThreadOperationQueue.h": "comm",
             "mars/stn/stn.h": "stn",
-            "mars/stn/stn_logic.h": "stn",
+            "mars/stn/t_stn_logic.h": "stn",
             "mars/stn/proto/stnproto_logic.h": "stn",
             "mars/baseevent/base_logic.h": "baseevent",
             "mars/comm/xlogger/preprocessor.h": "xlog",

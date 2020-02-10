@@ -66,7 +66,7 @@ static NetworkService * sharedSingleton = nil;
     mars::app::SetCallback(mars::app::AppCallBack::Instance());
 }
 
-- (void) createMars {
+- (void)createMars {
     mars::baseevent::OnCreate();
 }
 
@@ -112,7 +112,7 @@ static NetworkService * sharedSingleton = nil;
 }
 
 - (void)makesureLongLinkConnect {
-    mars::stn::MakesureLonglinkConnected();
+//    mars::stn::MakesureLonglinkConnected();
 }
 
 - (void)destroyMars {
@@ -131,7 +131,7 @@ static NetworkService * sharedSingleton = nil;
     ctask.shortlink_host_list.push_back(std::string(task.host.UTF8String));
     ctask.user_context = (__bridge void*)task;
     
-    mars::stn::StartTask(ctask);
+//    mars::stn::StartTask(ctask);
     
     NSString *taskIdKey = [NSString stringWithFormat:@"%d", ctask.taskid];
     [_delegate addObserver:delegateUI forKey:taskIdKey];
@@ -141,7 +141,7 @@ static NetworkService * sharedSingleton = nil;
 }
 
 - (void)stopTask:(NSInteger)taskID {
-    mars::stn::StopTask((uint32_t)taskID);
+//    mars::stn::StopTask((uint32_t)taskID);
 }
 
 
@@ -199,11 +199,11 @@ static NetworkService * sharedSingleton = nil;
     mars::stn:: StartNetWorkSniffering();
 }
 - (void)clearNetLink {
-    printf("testzzj longlink connect status %d",mars::stn::LongLinkIsConnected());
+//    printf("testzzj longlink connect status %d",mars::stn::LongLinkIsConnected());
     
 }
 - (void)setUpLocalHost {
-    mars::stn::SetDebugIP("localhost","127.0.0.1");
+//    mars::stn::SetDebugIP("localhost","127.0.0.1");
 }
 @end
 
