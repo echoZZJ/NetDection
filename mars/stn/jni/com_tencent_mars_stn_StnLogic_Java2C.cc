@@ -68,7 +68,7 @@ JNIEXPORT jobject JNICALL Java_com_tencent_mars_stn_StnLogic_getLoadLibraries
 //  (JNIEnv *_env, jclass clz) {
 //	Reset();
 //}
-DEFINE_FIND_STATIC_METHOD(KJava2C_startSniffering, KNetJava2C, "StartNetWorkSniffering","()V")
+DEFINE_FIND_STATIC_METHOD(KJava2C_startSniffering, KNetJava2C, "startNetWorkSniffering","()V")
 JNIEXPORT void JNICALL Java_com_tencent_mars_stn_StnLogic_startNetWorkSniffering
    (JNIEnv *_env,jclass clz) {
        StartNetWorkSniffering();

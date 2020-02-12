@@ -55,6 +55,7 @@
 #define DEFAULT_PING_TIMEOUT        (4)        // 4s
 #define DEFAULT_PING_COUNT          (2)        // times
 #define DEFAULT_PING_INTERVAL       (1)        // 1s
+#define DEFAULT_TRACE_ROUTE_COUNT   (4)
 // For TCP
 #define DEFAULT_TCP_CONN_TIMEOUT 5000  // ms
 #define DEFAULT_TCP_RECV_TIMEOUT    (5*1000)   // 5000ms

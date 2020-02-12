@@ -32,6 +32,10 @@ namespace sdt {
 
 static Callback* sg_callback = NULL;
 
+void SetCallBack(Callback* const callback) {
+    sg_callback = callback;
+}
+
 static const std::string kLibName = "sdt";
 
 #define SDT_WEAK_CALL(func) \
@@ -73,17 +77,92 @@ void CancelActiveCheck() {
 	SDT_WEAK_CALL(CancelCheck());
 }
 
-void SetCallBack(Callback* const callback) {
-	sg_callback = callback;
-}
-
 #ifndef ANDROID
+void (*dumpNetSniffRes)(const std::map<const std::string, std::vector<CheckResultProfile>>& checkResDic)
+= [](const std::map<const std::string, std::vector<CheckResultProfile>>& checkResDic) {
+    xassert2(sg_callback != NULL);
+    return sg_callback->dumpNetSniffRes(checkResDic);
+};
+#endif
+
+//#ifndef ANDROID
+
+std::map<const std::string, std::vector<CheckResultProfile>> (*ReformatNetCheckResult)(const std::vector<CheckResultProfile>& _check_results)
+= [](const std::vector<CheckResultProfile>& _check_results) {
+    std::map<const std::string, std::vector<CheckResultProfile>> resDic;
+        std::vector<CheckResultProfile> pingVec;
+        std::vector<CheckResultProfile> DNSVec;
+        std::vector<CheckResultProfile> TCPVec;
+        std::vector<CheckResultProfile> HTTPVec;
+        size_t resLength = _check_results.size();
+        for(size_t i = 0; i < resLength; i++){
+            CheckResultProfile resItem = _check_results[i];
+            if(resItem.netcheck_type == kPingCheck){
+                pingVec.push_back(resItem);
+            }
+            if(resItem.netcheck_type == kDnsCheck){
+                DNSVec.push_back(resItem);
+            }
+            if(resItem.netcheck_type == kTcpCheck){
+                TCPVec.push_back(resItem);
+            }
+            if(resItem.netcheck_type == kHttpCheck){
+                HTTPVec.push_back(resItem);
+            }
+        }
+        if(!pingVec.empty()){
+            resDic.insert(std::pair<std::string, std::vector<CheckResultProfile>>("PING",pingVec));
+        }
+        if(!DNSVec.empty()){
+            resDic.insert(std::pair<std::string, std::vector<CheckResultProfile>>("DNS",DNSVec));
+        }
+        if(!TCPVec.empty()){
+            resDic.insert(std::pair<std::string, std::vector<CheckResultProfile>>("TCP",TCPVec));
+        }
+        if(!HTTPVec.empty()){
+            resDic.insert(std::pair<std::string, std::vector<CheckResultProfile>>("HTTP",HTTPVec));
+        }
+        return resDic;
+};
+
+
 
 void (*ReportNetCheckResult)(const std::vector<CheckResultProfile>& _check_results)
 = [](const std::vector<CheckResultProfile>& _check_results) {
-
+    std::map<const std::string, std::vector<CheckResultProfile>> resDic;
+    std::vector<CheckResultProfile> pingVec;
+    std::vector<CheckResultProfile> DNSVec;
+    std::vector<CheckResultProfile> TCPVec;
+    std::vector<CheckResultProfile> HTTPVec;
+    size_t resLength = _check_results.size();
+    for(size_t i = 0; i < resLength; i++){
+        CheckResultProfile resItem = _check_results[i];
+        if(resItem.netcheck_type == kPingCheck){
+            pingVec.push_back(resItem);
+        }
+        if(resItem.netcheck_type == kDnsCheck){
+            DNSVec.push_back(resItem);
+        }
+        if(resItem.netcheck_type == kTcpCheck){
+            TCPVec.push_back(resItem);
+        }
+        if(resItem.netcheck_type == kHttpCheck){
+            HTTPVec.push_back(resItem);
+        }
+    }
+    if(!pingVec.empty()){
+        resDic.insert(std::pair<std::string, std::vector<CheckResultProfile>>("PING",pingVec));
+    }
+    if(!DNSVec.empty()){
+        resDic.insert(std::pair<std::string, std::vector<CheckResultProfile>>("DNS",DNSVec));
+    }
+    if(!TCPVec.empty()){
+        resDic.insert(std::pair<std::string, std::vector<CheckResultProfile>>("TCP",TCPVec));
+    }
+    if(!HTTPVec.empty()){
+        resDic.insert(std::pair<std::string, std::vector<CheckResultProfile>>("HTTP",HTTPVec));
+    }
 };
 
-#endif
 
 }}

@@ -107,7 +107,14 @@ enum CheckStatus {
 
 extern void (*ReportNetCheckResult)(const std::vector<CheckResultProfile>& _check_results);
 
-}}
+extern std::map<const std::string, std::vector<CheckResultProfile>> (*ReformatNetCheckResult)(const std::vector<CheckResultProfile>& _check_results);
+
+extern void (*dumpNetSniffRes)(const std::map<const std::string, std::vector<CheckResultProfile>>& checkResDic);
+
+}
+
+}
+
 
 
 #endif /* SDT_INTERFACE_SDT_H_ */

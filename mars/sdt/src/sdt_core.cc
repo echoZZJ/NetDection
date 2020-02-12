@@ -163,7 +163,8 @@ void SdtCore::__DumpCheckResult() {
         	break;
         }
     }
-    ReportNetCheckResult(check_request_.checkresult_profiles);
+    std::map<const std::string, std::vector<CheckResultProfile>> resDic = ReformatNetCheckResult(check_request_.checkresult_profiles);
+    dumpNetSniffRes(resDic);
 }
 
 void SdtCore::CancelCheck() {

@@ -35,7 +35,7 @@ public:
 };
 void SetCallback(Callback* const callback);
 
-extern void (*StartNetWorkSniffering)();
+  extern void (*StartNetWorkSniffering)();
 
 
 // 'host' will be ignored when 'debugip' is not empty.

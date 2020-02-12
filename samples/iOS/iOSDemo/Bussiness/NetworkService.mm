@@ -27,8 +27,10 @@
 
 #import "app_callback.h"
 #import "stn_callback.h"
+#import "sdt_callback.h"
 
 #import <mars/app/app_logic.h>
+#import <mars/sdt/sdt_logic.h>
 #import <mars/baseevent/base_logic.h>
 #import <mars/xlog/xlogger.h>
 #import <mars/xlog/xloggerbase.h>
@@ -64,6 +66,7 @@ static NetworkService * sharedSingleton = nil;
 - (void)setCallBack {
     mars::stn::SetCallback(mars::stn::StnCallBack::Instance());
     mars::app::SetCallback(mars::app::AppCallBack::Instance());
+    mars::sdt::SetCallBack(mars::sdt::SdtCallBack::Instance());
 }
 
 - (void)createMars {
@@ -197,13 +200,6 @@ static NetworkService * sharedSingleton = nil;
 }
 - (void)startNetSniffering {
     mars::stn:: StartNetWorkSniffering();
-}
-- (void)clearNetLink {
-//    printf("testzzj longlink connect status %d",mars::stn::LongLinkIsConnected());
-    
-}
-- (void)setUpLocalHost {
-//    mars::stn::SetDebugIP("localhost","127.0.0.1");
 }
 @end
 

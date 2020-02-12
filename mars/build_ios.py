@@ -57,8 +57,8 @@ def build_ios(tag=''):
     if not lipo_thin_libs('openssl/openssl_lib_iOS/libcrypto.a', crypto_lib, OPEN_SSL_ARCHS):
         return False
 
-    lipo_src_libs.append(ssl_lib)
-    lipo_src_libs.append(crypto_lib)
+    # lipo_src_libs.append(ssl_lib)
+    # lipo_src_libs.append(crypto_lib)
 
     lipo_dst_lib = INSTALL_PATH + '/mars'
 

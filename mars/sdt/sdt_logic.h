@@ -25,20 +25,22 @@
 namespace mars {
 namespace sdt {
 
-	class Callback
-	{
-	public:
-		virtual ~Callback() {};
-	};
+class Callback
+{
+public:
+    virtual ~Callback() {}
+    virtual void dumpNetSniffRes(const std::map<const std::string, std::vector<CheckResultProfile>>& checkResDic) = 0;
+};
 
-	void SetCallBack(Callback* const callback);
+void SetCallBack(Callback* const callback);
 
-	void SetHttpNetcheckCGI(std::string cgi);
+void SetHttpNetcheckCGI(std::string cgi);
 
-	//active netcheck interface
-	void StartActiveCheck(CheckIPPorts& _longlink_check_item, CheckIPPorts& _shortlink_check_item, int _mode, int _timeout);
-	void CancelActiveCheck();
+//active netcheck interface
+void StartActiveCheck(CheckIPPorts& _longlink_check_item, CheckIPPorts& _shortlink_check_item, int _mode, int _timeout);
+void CancelActiveCheck();
 
-}}
+}
+}
 
 #endif /* SDT_INTERFACE_SDT_LOGIC_H_ */
