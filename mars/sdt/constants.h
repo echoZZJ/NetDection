@@ -24,6 +24,7 @@
 #define NET_CHECK_LONG (1 << 1)
 #define NET_CHECK_SHORT (1 << 2)
 
+
 // Error sequence.
 #define ERR_SEQ (-1)
 

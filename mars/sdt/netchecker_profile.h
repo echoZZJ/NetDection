@@ -58,6 +58,7 @@ struct CheckResultProfile {
 		local_dns.clear();
 		ip1.clear();
 		ip2.clear();
+        traceRoute.clear();
 	}
 
 	int netcheck_type;	//ping dns tcp http
@@ -81,6 +82,8 @@ struct CheckResultProfile {
     std::string local_dns;		//dns
     std::string ip1;			//dns
     std::string ip2;			//dns
+    
+    std::string traceRoute;  //traceRoute
 
 };
 

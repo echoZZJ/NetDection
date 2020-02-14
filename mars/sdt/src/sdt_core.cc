@@ -32,6 +32,7 @@
 #include "activecheck/httpchecker.h"
 #include "activecheck/pingchecker.h"
 #include "activecheck/tcpchecker.h"
+#include "activecheck/traceroutechecker.h"
 #include "sdt_core.h"
 
 using namespace mars::sdt;
@@ -82,11 +83,14 @@ void SdtCore::__InitCheckReq(CheckIPPorts& _longlink_items, CheckIPPorts& _short
     
     if (MODE_BASIC(_mode)) {
         xinfo2(TSF"__InitCheckReq MODE_BASIC");
+        TraceRouteChecker * trace_checker = new TraceRouteChecker();
+        check_list_.push_back(trace_checker);
         PingChecker* ping_checker = new PingChecker();
         check_list_.push_back(ping_checker);
         DnsChecker* dns_checker = new DnsChecker();
         check_list_.push_back(dns_checker);
         xinfo2(TSF"MODE_BASIC  checkList is %_",check_list_.size());
+        
     }
     if (MODE_SHORT(_mode)) {
         xinfo2(TSF"__InitCheckReq MODE_SHORT");
@@ -101,6 +105,7 @@ void SdtCore::__InitCheckReq(CheckIPPorts& _longlink_items, CheckIPPorts& _short
         check_list_.push_back(tcp_checker);
         xinfo2(TSF"MODE_LONG  checkList is %_",check_list_.size());
     }
+    
 }
 
 void SdtCore::__Reset() {

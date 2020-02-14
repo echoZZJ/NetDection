@@ -197,6 +197,12 @@ int SocketSelect::Read_FD_ISSET(SOCKET _socket) const {
     const std::vector<PollEvent>& events = socket_poll_.TriggeredEvents();
     auto find_it = std::find_if(events.begin(), events.end(), [_socket](const PollEvent& _v){ return _v.FD() == _socket; });
     if (find_it == events.end()) return 0;
+    if (find_it->Readable()) {
+        printf("readable");
+    }
+    if (find_it->HangUp()) {
+           printf("HangUp");
+    }
     return find_it->Readable() || find_it->HangUp();
 }
 
