@@ -22,6 +22,8 @@
 #include <vector>
 #include <string>
 #include <algorithm>
+#include <arpa/inet.h>
+
 #if defined __APPLE__
 #include <fstream>
 #endif
@@ -155,11 +157,24 @@ int socket_gethostbyname(const char* _host, socket_ipinfo_t* _ipinfo, int _timeo
         ::socket_close(sock);
         return -1;
     }
-
-    std::vector<std::string>::iterator iter = dns_servers.begin();
+#ifdef ANDROID
     // 配置DNS服务器的IP和端口号
+    std::vector<std::string>::iterator iter = dns_servers.begin();
+    for (std::vector<std::string>::iterator diter = dns_servers.begin(); diter != dns_servers.end(); ++diter) {
+        xinfo2(TSF"dns_servers item is:%_", (*diter).c_str());
+    }
     dest = *(struct sockaddr_in*)(&socket_address((*iter).c_str(), DNS_PORT).address());
-
+#elif defined __APPLE__
+    for (std::vector<std::string>::iterator diter = dns_servers.begin(); diter != dns_servers.end(); ++diter) {
+        in_addr  addr4 = {0};
+        //过滤ipv6
+        if (socket_inet_pton(AF_INET, (*diter).c_str(), &addr4)) {
+            // 配置DNS服务器的IP和端口号
+            dest = *(struct sockaddr_in*)(&socket_address((*diter).c_str(), DNS_PORT).address());
+            break;
+        }
+    }
+#endif
     struct RES_RECORD answers[SOCKET_MAX_IP_COUNT];  // the replies from the DNS server
     memset(answers, 0, sizeof(RES_RECORD)*SOCKET_MAX_IP_COUNT);
 
@@ -180,20 +195,18 @@ int socket_gethostbyname(const char* _host, socket_ipinfo_t* _ipinfo, int _timeo
                 break;
             }
         }
-
         if (sendto(sock, (char*)send_buf, send_packlen, 0, (struct sockaddr*)&dest, sizeof(dest)) == -1) {
-            xerror2(TSF"send dns query error.");
+            xinfo2(TSF"sock:%_,send_buf:%_,send_packlen:%_,destAddress:%_",sock,send_buf,send_packlen,(char *)inet_ntoa(dest.sin_addr));
+            xerror2(TSF"send dns query error:%_ with dns_servers:%_",strerror(errno),(*dns_servers.begin()).c_str());
             break;
         }
 
         struct sockaddr_in recv_src = {0};
-
         socklen_t recv_src_len = sizeof(recv_src);
-
         int recvPacketLen = 0;
 
         if ((recvPacketLen = RecvWithinTime(sock, (char*)recv_buf, BUF_LEN, (struct sockaddr*)&recv_src, &recv_src_len, _timeout / 1000, (_timeout % 1000) * 1000)) == -1) {
-            xerror2(TSF"receive dns query error.");
+            xerror2(TSF"receive dns query error detail:%_.",strerror(errno));
             break;
         }
 
@@ -432,6 +445,11 @@ label:
             goto label;
         }
     }
+    if (ret == 0) {
+        //超时
+         xerror2(TSF"socket timeout.");
+        return -1;
+    }
 
     if (FD_ISSET(_fd, &exceptfds)) {
         // socket异常处理
@@ -500,8 +518,8 @@ void GetHostDnsServerIP(std::vector<std::string>& _dns_servers) {
             for (int i = 0; i < stat.nscount; i++) {
                 nsaddr = stat.nsaddr_list[i];
                 const char* nsIP = socket_address(nsaddr).ip();
-
-                if (NULL != nsIP)
+                std::string nsIPS = std::string(nsIP);
+                if (!nsIPS.empty())
                 	_dns_servers.push_back(std::string(nsIP));
             }
 //        }

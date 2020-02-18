@@ -130,8 +130,8 @@ _have_ipv4(struct sockaddr* local_addr, socklen_t local_addr_len) {
 }
 
 bool two_addrs_on_one_interface(sockaddr* first_addr, sockaddr* second_addr) {
-    char ip1[64] = {0};
-    char ip2[64] = {0};
+    char ip1[64] = "0";
+    char ip2[64] = "0";
     std::string ip1_ifname, ip2_ifname;
     if (AF_INET == first_addr->sa_family) {
         socket_inet_ntop(AF_INET, &(((sockaddr_in*)first_addr)->sin_addr), ip1, sizeof(ip1));

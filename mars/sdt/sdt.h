@@ -39,6 +39,7 @@ struct CheckIPPort {
 
 	CheckIPPort(std::string _ip, uint16_t _port)
 	: ip(_ip), port(_port){}
+    
 
 	bool operator < (const CheckIPPort& _rhs) const {
 		return ip < _rhs.ip;
@@ -47,6 +48,7 @@ struct CheckIPPort {
 	CheckIPPort& operator = (const CheckIPPort& _rhs)  {
 		ip = _rhs.ip;
 		port = _rhs.port;
+//        host_url = _rhs.host_url;
 		return (*this);
 	}
 
@@ -54,7 +56,7 @@ struct CheckIPPort {
 		ip.clear();
 		port = 0;
 	}
-
+//    std::string host_url;
 	std::string ip;
 	uint16_t port;
 
@@ -103,13 +105,15 @@ enum TcpErrCode {
 enum CheckStatus {
 	kCheckContinue = 0,
 	kCheckFinish = 1,
+    kCheckNoBlock = 2,
 } ;
 
 extern void (*ReportNetCheckResult)(const std::vector<CheckResultProfile>& _check_results);
 
 extern std::map<const std::string, std::vector<CheckResultProfile>> (*ReformatNetCheckResult)(const std::vector<CheckResultProfile>& _check_results);
 
-extern void (*dumpNetSniffRes)(const std::map<const std::string, std::vector<CheckResultProfile>>& checkResDic);
+extern void (*dumpNetSniffRes)(const std::map<const std::string, std::vector<std::string>>& checkResDic,bool isCancle);
+extern void (*dumpNetReportRes)(const std::map<const std::string, std::vector<std::string>>& checkResDic);
 
 }
 

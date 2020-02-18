@@ -39,6 +39,11 @@ using namespace mars::sdt;
 
 #define RETURN_NETCHECKER_SYNC2ASYNC_FUNC(func) RETURN_SYNC2ASYNC_FUNC(func, async_reg_.Get(), )
 
+#define TYPE_PING "PING"
+#define TYPE_DNS "DNS"
+#define TYPE_HTPP "HTTP"
+#define TYPE_TCP "TCP"
+
 SdtCore::SdtCore()
     : thread_(boost::bind(&SdtCore::__RunOn, this))
     , check_list_(std::list<BaseChecker*>())
@@ -83,12 +88,12 @@ void SdtCore::__InitCheckReq(CheckIPPorts& _longlink_items, CheckIPPorts& _short
     
     if (MODE_BASIC(_mode)) {
         xinfo2(TSF"__InitCheckReq MODE_BASIC");
-        TraceRouteChecker * trace_checker = new TraceRouteChecker();
-        check_list_.push_back(trace_checker);
         PingChecker* ping_checker = new PingChecker();
         check_list_.push_back(ping_checker);
         DnsChecker* dns_checker = new DnsChecker();
         check_list_.push_back(dns_checker);
+        TraceRouteChecker * trace_checker = new TraceRouteChecker();
+        check_list_.push_back(trace_checker);
         xinfo2(TSF"MODE_BASIC  checkList is %_",check_list_.size());
         
     }
@@ -139,6 +144,9 @@ void SdtCore::__RunOn() {
             xinfo2(TSF"check_request finish");
             break;
         }
+        if (check_request_.check_status == kCheckNoBlock) {
+            xinfo2(TSF"check_request faild at DNS");
+        }
         (*iter)->StartDoCheck(check_request_);
     }
 
@@ -146,30 +154,63 @@ void SdtCore::__RunOn() {
 
     __DumpCheckResult();
     __Reset();
-
 }
-
+bool t_updateMapValue(std::string &key,std::map<const std::string, std::vector<CheckResultProfile>> &resMap){
+    if (resMap.find(key) == resMap.end()){
+       return true;
+    }
+    return false;
+}
 void SdtCore::__DumpCheckResult() {
-    
     std::vector<CheckResultProfile>::iterator iter = check_request_.checkresult_profiles.begin();
+    std::vector<std::string> resJsonVec;
+    std::vector<std::string> displayVec;
+    std::vector<std::string> pingVec;
+    std::vector<std::string> httpVec;
+    std::vector<std::string> dnsVec;
+    std::vector<std::string> tcpVec;
+    std::map<const std::string, std::vector<std::string>> dump_res;
     for (; iter != check_request_.checkresult_profiles.end(); ++iter) {
+        XMessage res_str;
         switch(iter->netcheck_type) {
         case kTcpCheck:
-        	xinfo2(TSF"tcp check result, error_code:%_, ip:%_, port:%_, network_type:%_, rtt:%_", iter->error_code, iter->ip, iter->port, iter->network_type, iter->rtt);
-        	break;
+            res_str(TSF"tcp check result, error_code:%_, ip:%_, port:%_, network_type:%_, rtt:%_", iter->error_code, iter->ip, iter->port, iter->network_type, iter->rtt);
+            tcpVec.push_back(iter->toJson());
+            break;
         case kHttpCheck:
-        	xinfo2(TSF"http check result, status_code:%_, url:%_, ip:%_, port:%_, network_type:%_, rtt:%_", iter->status_code, iter->url, iter->ip, iter->port, iter->network_type, iter->rtt);
-        	break;
+            res_str(TSF"http check result, status_code:%_, url:%_, ip:%_, port:%_, network_type:%_, rtt:%_", iter->status_code, iter->url, iter->ip, iter->port, iter->network_type, iter->rtt);
+            httpVec.push_back(iter->toJson());
+            break;
         case kPingCheck:
-        	xinfo2(TSF"ping check result, error_code:%_, ip:%_, network_type:%_, loss_rate:%_, rtt:%_", iter->error_code, iter->ip, iter->network_type, iter->loss_rate, iter->rtt_str);
-        	break;
+            res_str(TSF"ping check result, error_code:%_, ip:%_, network_type:%_, loss_rate:%_, rtt:%_", iter->error_code, iter->ip, iter->network_type, iter->loss_rate, iter->rtt_str);
+            pingVec.push_back(iter->toJson());
+            break;
         case kDnsCheck:
-        	xinfo2(TSF"dns check result, error_code:%_, domain_name:%_, network_type:%_, ip1:%_, rtt:%_", iter->error_code, iter->domain_name, iter->network_type, iter->ip1, iter->rtt);
-        	break;
+            res_str(TSF"dns check result, error_code:%_, domain_name:%_, network_type:%_, ip1:%_, rtt:%_", iter->error_code, iter->domain_name, iter->network_type, iter->ip1, iter->rtt);
+            dnsVec.push_back(iter->toJson());
+            break;
+        case kTracerouteCheck:
+            res_str(TSF"traceroute check result, error_code:%_, network_type:%_, traceroute_str:%_",iter->error_code, iter->network_type, iter->traceRoute);
+            break;
         }
+        resJsonVec.push_back(iter->toJson());
     }
-    std::map<const std::string, std::vector<CheckResultProfile>> resDic = ReformatNetCheckResult(check_request_.checkresult_profiles);
-    dumpNetSniffRes(resDic);
+    if (!pingVec.empty()) {
+        dump_res.insert(std::pair<const std::string, std::vector<std::string>>(TYPE_PING,pingVec));
+    }
+    if (!tcpVec.empty()) {
+        dump_res.insert(std::pair<const std::string, std::vector<std::string>>(TYPE_TCP,tcpVec));
+    }
+    if (!httpVec.empty()) {
+        dump_res.insert(std::pair<const std::string, std::vector<std::string>>(TYPE_HTPP,httpVec));
+    }
+    if (!dnsVec.empty()) {
+        dump_res.insert(std::pair<const std::string, std::vector<std::string>>(TYPE_DNS,dnsVec));
+    }
+    dump_res.insert(std::pair<const std::string, std::vector<std::string>>("report",resJsonVec));
+    xinfo2(TSF"dump finished");
+    dumpNetReportRes(dump_res);
+    dumpNetSniffRes(dump_res,false);
 }
 
 void SdtCore::CancelCheck() {
@@ -178,6 +219,8 @@ void SdtCore::CancelCheck() {
     for (std::list<BaseChecker*>::iterator iter = check_list_.begin(); iter != check_list_.end(); ++iter) {
         (*iter)->CancelDoCheck();
     }
+    std::map<const std::string, std::vector<std::string>> dump_res;
+    dumpNetSniffRes(dump_res,true);
 }
 
 void SdtCore::CancelAndWait() {

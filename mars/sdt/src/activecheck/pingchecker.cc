@@ -66,19 +66,17 @@ void PingChecker::__DoCheck(CheckRequestProfile& _check_request) {
 			profile.ip = host;
 			profile.netcheck_type = kPingCheck;
 			profile.network_type = ::getNetInfo();
-
+            profile.domain_name = iter->first;
 			uint64_t start_time = gettickcount();
 			PingQuery ping_query;
-//   testzzj0         return :-1 no send all packets
-//         0 send all packets
-			int ret = ping_query.RunPingQuery(1, 0, (UNUSE_TIMEOUT == _check_request.total_timeout ? 0 : _check_request.total_timeout / 1000), host.c_str());
+			int ret = ping_query.RunPingQuery(0, 0, (UNUSE_TIMEOUT == _check_request.total_timeout ? 0 : _check_request.total_timeout / 1000), host.c_str());
 			uint64_t cost_time = gettickcount() - start_time;
 
 			profile.error_code = ret;
 			profile.checkcount = DEFAULT_PING_COUNT;
 
 			struct PingStatus ping_status;  // = {0};  //can not define pingStatus in if(0==ret),because we need pingStatus.ip
-			char loss_rate[16] = {0};
+			char loss_rate[16] = "0";
 			char avgrtt[16] = {0};
 
 			if (0 == ret) {
@@ -95,12 +93,14 @@ void PingChecker::__DoCheck(CheckRequestProfile& _check_request) {
 				snprintf(avgrtt, 16, "%f", ping_status.avgrtt);
 
 				profile.loss_rate = loss_rate;
-				profile.rtt_str = avgrtt;
+                profile.rtt_str = (strlen(avgrtt) == 0 ? "0" : std::string(avgrtt));
 			}
 
 			_check_request.checkresult_profiles.push_back(profile);
 			_check_request.check_status = (profile.error_code == 0) ? kCheckContinue : kCheckFinish;
-
+            if (ret < 0) {
+                xinfo2(TSF"checkfinished error");
+            }
 			if (_check_request.total_timeout != UNUSE_TIMEOUT) {
 				_check_request.total_timeout -= cost_time;
 				if (_check_request.total_timeout <= 0) {
@@ -124,7 +124,7 @@ void PingChecker::__DoCheck(CheckRequestProfile& _check_request) {
 			std::string host = (*ipport).ip.empty() ? DEFAULT_PING_HOST : (*ipport).ip;
 			profile.ip = host;
 			profile.netcheck_type = kPingCheck;
-
+            profile.domain_name = iter->first;
 			uint64_t start_time = gettickcount();
 			PingQuery ping_query;
 			int ret = ping_query.RunPingQuery(1, 0, (UNUSE_TIMEOUT == _check_request.total_timeout ? 0 : _check_request.total_timeout / 1000), host.c_str());
@@ -151,12 +151,14 @@ void PingChecker::__DoCheck(CheckRequestProfile& _check_request) {
 				snprintf(avgrtt, 16, "%f", ping_status.avgrtt);
 
 				profile.loss_rate = loss_rate;
-				profile.rtt_str = avgrtt;
+                profile.rtt_str = (strlen(avgrtt) == 0 ? "0" : std::string(avgrtt));
 			}
 
 			_check_request.checkresult_profiles.push_back(profile);
 			_check_request.check_status = (profile.error_code == 0) ? kCheckContinue : kCheckFinish;
-
+            if (ret < 0) {
+                xinfo2(TSF"checkfinished error");
+            }
 			if (_check_request.total_timeout != UNUSE_TIMEOUT) {
 				_check_request.total_timeout -= cost_time;
 				if (_check_request.total_timeout <= 0) {

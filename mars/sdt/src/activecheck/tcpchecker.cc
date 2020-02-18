@@ -62,7 +62,7 @@ void TcpChecker::__DoCheck(CheckRequestProfile& _check_request) {
     		profile.ip = (*ipport).ip;
     		profile.port = (*ipport).port;
 			profile.network_type = ::getNetInfo();
-
+            profile.domain_name = iter->first;
     		unsigned int timeout = UNUSE_TIMEOUT == _check_request.total_timeout ? DEFAULT_TCP_CONN_TIMEOUT : _check_request.total_timeout;
 			xinfo2(TSF"tcp check ip: %0, port: %1, timeout: %2", profile.ip, profile.port, timeout);
 
@@ -97,6 +97,7 @@ void TcpChecker::__DoCheck(CheckRequestProfile& _check_request) {
 				} else {
 					uint32_t cmdid = longlink_noop_cmdid(), seq = 0; size_t packlen = 0; AutoBuffer recv_body;
 					profile.rtt = cost_time;
+                    profile.rtt_str = std::to_string(cost_time);
 					if (!__NoopResp(recv_buff, cmdid, seq, packlen, recv_body)) {	//not noop resp
 						profile.error_code = kTcpRespErr;
 					}
@@ -105,7 +106,9 @@ void TcpChecker::__DoCheck(CheckRequestProfile& _check_request) {
 
 			_check_request.checkresult_profiles.push_back(profile);
 			_check_request.check_status = (profile.error_code == 0) ? kCheckContinue : kCheckFinish;
-
+            if (ret < 0) {
+                xinfo2(TSF"checkfinished error");
+            }
 			if (_check_request.total_timeout != UNUSE_TIMEOUT) {
 				_check_request.total_timeout -= cost_time;
 				if (_check_request.total_timeout <= 0) {

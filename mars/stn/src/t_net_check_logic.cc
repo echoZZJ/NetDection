@@ -94,8 +94,8 @@ void NetCheckLogic::__StartNetCheck() {
 
         std::vector<CheckIPPort> check_ipport_list;
         for (std::vector<std::string>::iterator ip_iter = shortlink_iplist.begin(); ip_iter != shortlink_iplist.end(); ++ip_iter) {
-            for (std::vector<uint16_t>::iterator iter = shortlink_ports.begin(); iter != shortlink_ports.end(); ++iter) {
-                CheckIPPort ipport_item(*ip_iter, *iter);
+            for (std::vector<uint16_t>::iterator port_iter = shortlink_ports.begin(); port_iter != shortlink_ports.end(); ++port_iter) {
+                CheckIPPort ipport_item(*ip_iter, *port_iter);
                 check_ipport_list.push_back(ipport_item);
             }
         }
@@ -106,4 +106,6 @@ void NetCheckLogic::__StartNetCheck() {
     int mode = (NET_CHECK_BASIC | NET_CHECK_LONG | NET_CHECK_SHORT);
     xinfo2(TSF"net check mode is %_",mode);
     if (!longlink_check_items.empty() || !shortlink_check_items.empty()) StartActiveCheck(longlink_check_items, shortlink_check_items, mode, UNUSE_TIMEOUT);
+    else
+        CancelActiveCheck();
 }

@@ -55,7 +55,8 @@ void DnsChecker::__DoCheck(CheckRequestProfile& _check_request) {
         }
         
 		CheckResultProfile profile;
-		profile.domain_name = iter->first;
+        std::string dname = iter->first;
+        profile.domain_name = (dname.size() == 0 ? "0":dname);
 		profile.netcheck_type = kDnsCheck;
 		profile.network_type = ::getNetInfo();
 
@@ -79,11 +80,14 @@ void DnsChecker::__DoCheck(CheckRequestProfile& _check_request) {
 				xerror2(TSF"ret = 0, but ipinfo.size = %d", ipinfo.size);
 			}
 		} else {
-			xinfo2(TSF"%0, check dns, host: %1, ret: %2", NET_CHECK_TAG, profile.domain_name, CHECK_FAIL);
+			xinfo2(TSF"%0, check dns, host: %1, ret: %2 detail:%_", NET_CHECK_TAG, profile.domain_name, CHECK_FAIL, strerror(errno));
 		}
 
         _check_request.checkresult_profiles.push_back(profile);
-        _check_request.check_status = (ret >= 0 ? kCheckContinue : kCheckFinish);
+        _check_request.check_status = (ret >= 0 ? kCheckContinue : kCheckNoBlock);
+        if (ret < 0) {
+            xinfo2(TSF"checkfinished error");
+        }
 
 		if (_check_request.total_timeout != UNUSE_TIMEOUT) {
 			_check_request.total_timeout -= cost_time;
@@ -106,7 +110,6 @@ void DnsChecker::__DoCheck(CheckRequestProfile& _check_request) {
 		profile.domain_name = iter->first;
 		profile.netcheck_type = kDnsCheck;
 		profile.network_type = ::getNetInfo();
-
 		struct socket_ipinfo_t ipinfo;
 		int timeout = (_check_request.total_timeout == UNUSE_TIMEOUT ? DEFAULT_DNS_TIMEOUT : _check_request.total_timeout);
         uint64_t start_time = gettickcount();
@@ -131,8 +134,10 @@ void DnsChecker::__DoCheck(CheckRequestProfile& _check_request) {
 		}
 
         _check_request.checkresult_profiles.push_back(profile);
-        _check_request.check_status = (ret >= 0 ? kCheckContinue : kCheckFinish);
-
+        _check_request.check_status = (ret >= 0 ? kCheckContinue : kCheckNoBlock);
+        if (ret < 0) {
+            xinfo2(TSF"checkfinished error");
+        }
 		if (_check_request.total_timeout != UNUSE_TIMEOUT) {
 			_check_request.total_timeout -= cost_time;
 			if (_check_request.total_timeout <= 0) {

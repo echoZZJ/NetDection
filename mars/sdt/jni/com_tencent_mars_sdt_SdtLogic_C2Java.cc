@@ -32,12 +32,17 @@
 
 DEFINE_FIND_CLASS(KC2Java, "com/tencent/mars/sdt/SdtLogic")
 
+#define TYPE_PING "PING"
+#define TYPE_DNS "DNS"
+#define TYPE_HTPP "HTTP"
+#define TYPE_TCP "TCP"
+
 namespace mars {
 namespace sdt {
 
 DEFINE_FIND_STATIC_METHOD(KC2Java_dumpNetSniffRes,KC2Java,"dumpNetSniffRes","(Ljava/lang/String;)V")
-void(*dumpNetSniffRes)(const std::map<const std::string, std::vector<CheckResultProfile>>& checkResDic)
-=[](const std::map<const std::string, std::vector<CheckResultProfile>>& checkResDic){
+void(*dumpNetSniffRes)(const std::map<const std::string, std::vector<std::string>>& checkResDic,bool isCancle)
+=[](const std::map<const std::string, std::vector<std::string>>& checkResDic,bool isCancle){
 	xverbose_function();
 
 	VarCache* cache_instance = VarCache::Singleton();
@@ -46,43 +51,101 @@ void(*dumpNetSniffRes)(const std::map<const std::string, std::vector<CheckResult
 
 	XMessage check_results_str;
 	check_results_str << "{";
-    check_results_str << "\"sniffResult\":[";
-
-	std::map<const std::string, std::vector<CheckResultProfile> >::const_iterator iter = checkResDic.begin();
-	for(iter = checkResDic.begin(); iter != checkResDic.end(); iter++) {
-        check_results_str << "{";
-        check_results_str << "\"type\":"<< iter->first;
-        check_results_str << "\"details\":";
-
-		std::vector<CheckResultProfile>::const_iterator t_iter = iter->second.begin();
-    for (; t_iter !=  iter->second.end();) {
-        check_results_str << "{";
-        check_results_str << "\"detectType\":" << t_iter->netcheck_type;
-        check_results_str << ",\"errorCode\":" << t_iter->error_code;
-        check_results_str << ",\"networkType\":" << t_iter->network_type;
-        check_results_str << ",\"detectIP\":\"" << t_iter->ip << "\"";
-        check_results_str << ",\"port\":" << t_iter->port;
-        check_results_str << ",\"conntime\":" << t_iter->conntime;
-        check_results_str << ",\"rtt\":" << t_iter->rtt;
-        check_results_str << ",\"rttStr\":\"" << t_iter->rtt_str << "\"";
-        check_results_str << ",\"httpStatusCode\":" << t_iter->status_code;
-        check_results_str << ",\"pingCheckCount\":" << t_iter->checkcount;
-        check_results_str << ",\"pingLossRate\":\"" << t_iter->loss_rate << "\"";
-        check_results_str << ",\"dnsDomain\":\"" << t_iter->domain_name << "\"";
-        check_results_str << ",\"localDns\":\"" << t_iter->local_dns << "\"";
-        check_results_str << ",\"dnsIP1\":\"" << t_iter->ip1 << "\"";
-        check_results_str << ",\"dnsIP2\":\"" << t_iter->ip2 << "\"";
-        check_results_str << "}";
-        if (++t_iter != iter->second.end()) {
-            check_results_str << ",";
-        }
-        else {
-            break;
-        }
+    std::string jsonRes =   "\"SniffResult\":{";
+    if (isCancle)
+    {
+        check_results_str << jsonRes << "}}";
+        JNU_CallStaticMethodByMethodInfo(env, KC2Java_dumpNetSniffRes, ScopedJstring(env, check_results_str.String().c_str()).GetJstr());
+        return;
     }
-        check_results_str << "}";
-		JNU_CallStaticMethodByMethodInfo(env, KC2Java_dumpNetSniffRes, ScopedJstring(env, check_results_str.String().c_str()).GetJstr());
-    }
+    
+    
+    std::string pingRes =  "\"PING\":[";
+    std::string dnsRes =  "\"DNS\":[";
+    std::string httpRes =  "\"HTTP\":[";
+    std::string tcpRes =  "\"TCP\":[";
+    for (const auto &m : checkResDic) {
+        if (m.first == TYPE_PING)
+        {
+            std::vector<std::string>::const_iterator t_iter = m.second.begin();
+             for (const auto &piece : m.second) {
+                 pingRes +=  piece;
+                 if (++t_iter != m.second.end()) {
+                     pingRes += ",\n";
+                 }
+             }
+        }
+        if (m.first == TYPE_DNS)
+        {
+            /* code */
+            std::vector<std::string>::const_iterator t_iter = m.second.begin();
+             for (const auto &piece : m.second) {
+                 dnsRes +=  piece;
+                 if (++t_iter != m.second.end()) {
+                     dnsRes += ",\n";
+                 }
+             }
+        }
+        if (m.first == TYPE_HTPP)
+        {
+            /* code */
+            std::vector<std::string>::const_iterator t_iter = m.second.begin();
+             for (const auto &piece : m.second) {
+                 httpRes +=  piece;
+                 if (++t_iter != m.second.end()) {
+                     httpRes += ",\n";
+                 }
+             }
+        }
+        if (m.first == TYPE_TCP)
+        {
+            /* code */
+            std::vector<std::string>::const_iterator t_iter = m.second.begin();
+             for (const auto &piece : m.second) {
+                 tcpRes +=  piece;
+                 if (++t_iter != m.second.end()) {
+                     tcpRes += ",\n";
+                 }
+             }
+        }
+     }
+    pingRes += "],";
+    dnsRes += "],";
+    httpRes += "],";
+    tcpRes += "]";
+    check_results_str << jsonRes << pingRes << dnsRes << httpRes << tcpRes ;
+    check_results_str << "}}";
+	JNU_CallStaticMethodByMethodInfo(env, KC2Java_dumpNetSniffRes, ScopedJstring(env, check_results_str.String().c_str()).GetJstr());
+    
+};
+
+DEFINE_FIND_STATIC_METHOD(KC2Java_dumpNetReportRes,KC2Java,"dumpNetReportRes","(Ljava/lang/String;)V")
+void(*dumpNetReportRes)(const std::map<const std::string, std::vector<std::string>>& checkResDic)
+=[](const std::map<const std::string, std::vector<std::string>>& checkResDic){
+	xverbose_function();
+
+	VarCache* cache_instance = VarCache::Singleton();
+	ScopeJEnv scope_jenv(cache_instance->GetJvm());
+	JNIEnv *env = scope_jenv.GetEnv();
+
+	XMessage check_results_str;
+	check_results_str << "{";
+    std::string reportRes = "\"ReportResult\":[";
+    for (const auto &m : checkResDic) {
+         if (m.first == "report") {
+             std::vector<std::string>::const_iterator t_iter = m.second.begin();
+             for (const auto &piece : m.second) {
+                 reportRes +=  piece;
+                 if (++t_iter != m.second.end()) {
+                     reportRes += ",\n";
+                 }
+             }
+         } 
+     }
+    reportRes += "]";
+    check_results_str << reportRes << "}" ;
+	JNU_CallStaticMethodByMethodInfo(env, KC2Java_dumpNetReportRes, ScopedJstring(env, check_results_str.String().c_str()).GetJstr());
+    
 };
 
 // DEFINE_FIND_STATIC_METHOD(KC2Java_reportSignalDetectResults, KC2Java, "reportSignalDetectResults", "(Ljava/lang/String;)V")

@@ -1,12 +1,12 @@
 //
-//  traceroutequery.h
+//  traceroute_query.h
 //  sdt
 //
-//  Created by didi on 2020/2/13.
+//  Created by didi on 2020/2/18.
 //
 
-#ifndef traceroutequery_h
-#define traceroutequery_h
+#ifndef traceroute_query_h
+#define traceroute_query_h
 
 #include <string>
 #include <vector>
@@ -75,6 +75,13 @@ public:
     
     private:
         std::string                tracerouteresult_;
+    #ifdef ANDROID
+        int                     doATracePath(int argc, char **argv);
+        int                     recverr(int fd, int ttl);
+        int                     t_printf(const char *fmt, ...);
+        int                     probe_ttl(int fd, int ttl);
+        void                    print_host(const char *a, const char *b, int both);
+    #endif
     #ifdef __APPLE__
         int                     nsent_;                /* add 1 for each sendto() */
         std::string             destIP;
@@ -96,5 +103,4 @@ public:
 
 }
 }
-
-#endif /* traceroutequery_h */
+#endif /* traceroute_query_h */

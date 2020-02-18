@@ -12,7 +12,7 @@
 #include "mars/comm/time_utils.h"
 #include "mars/sdt/constants.h"
 
-#include "sdt/src/checkimpl/traceroutequery.h"
+#include "sdt/src/checkimpl/traceroute_query.h"
 
 using namespace mars::sdt;
 
@@ -46,14 +46,18 @@ void TraceRouteChecker::__DoCheck(CheckRequestProfile &_check_request) {
             CheckResultProfile profile;
             std::string host = (*ipport).ip.empty() ? DEFAULT_PING_HOST : (*ipport).ip;
             profile.ip = host;
-            profile.netcheck_type = kPingCheck;
-
+            profile.netcheck_type = kTracerouteCheck;
+            profile.domain_name = iter->first;
             TraceRouteQuery traceQuery;
+            xinfo2(TSF"t_RunTraceRouteQuery with host%_",host);
             int ret = traceQuery.t_RunTraceRouteQuery(0, 0, 0, host.c_str());
             profile.error_code = ret;
             profile.traceRoute = traceQuery.GetTraceRoute();
             _check_request.checkresult_profiles.push_back(profile);
             _check_request.check_status = (profile.error_code == 0) ? kCheckContinue : kCheckFinish;
+            if (ret != 0) {
+                xinfo2(TSF"checkfinished error with ret:%_",ret);
+            }
         }
         
     }

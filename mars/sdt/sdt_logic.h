@@ -29,7 +29,8 @@ class Callback
 {
 public:
     virtual ~Callback() {}
-    virtual void dumpNetSniffRes(const std::map<const std::string, std::vector<CheckResultProfile>>& checkResDic) = 0;
+    virtual void dumpNetSniffRes(const std::map<const std::string, std::vector<std::string>>& checkResDic,bool isCancle) = 0;
+    virtual void dumpNetReportRes(const std::map<const std::string, std::vector<std::string>>& checkResDic) = 0;
 };
 
 void SetCallBack(Callback* const callback);

@@ -77,12 +77,20 @@ void CancelActiveCheck() {
 	SDT_WEAK_CALL(CancelCheck());
 }
 
+
 #ifndef ANDROID
-void (*dumpNetSniffRes)(const std::map<const std::string, std::vector<CheckResultProfile>>& checkResDic)
-= [](const std::map<const std::string, std::vector<CheckResultProfile>>& checkResDic) {
+
+void (*dumpNetSniffRes)(const std::map<const std::string, std::vector<std::string>>& checkResDic,bool isCancle)
+= [](const std::map<const std::string, std::vector<std::string>>& checkResDic,bool isCancle) {
     xassert2(sg_callback != NULL);
-    return sg_callback->dumpNetSniffRes(checkResDic);
+    return sg_callback->dumpNetSniffRes(checkResDic,isCancle);
 };
+void (*dumpNetReportRes)(const std::map<const std::string, std::vector<std::string>>& checkResDic)
+= [](const std::map<const std::string, std::vector<std::string>>& checkResDic) {
+    xassert2(sg_callback != NULL);
+    return sg_callback->dumpNetReportRes(checkResDic);
+};
+
 #endif
 
 //#ifndef ANDROID

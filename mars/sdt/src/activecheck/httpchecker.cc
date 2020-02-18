@@ -73,7 +73,6 @@ void HttpChecker::__DoCheck(CheckRequestProfile& _check_request) {
     		profile.network_type = ::getNetInfo();
     		profile.ip = (*ipport).ip;
     		profile.port = (*ipport).port;
-
     		profile.url = (iter->first.empty() ? DEFAULT_HTTP_HOST : (iter->first));
     		profile.url.append(sg_netcheck_cgi.c_str());
     		uint64_t start_time = gettickcount();
@@ -96,7 +95,9 @@ void HttpChecker::__DoCheck(CheckRequestProfile& _check_request) {
 
             _check_request.checkresult_profiles.push_back(profile);
             _check_request.check_status = (ret >= 0 ? kCheckContinue : kCheckFinish);
-
+            if (ret < 0) {
+                xinfo2(TSF"checkfinished error");
+            }
 			if (_check_request.total_timeout != UNUSE_TIMEOUT) {
 				_check_request.total_timeout -= cost_time;
 				if (_check_request.total_timeout <= 0) {
