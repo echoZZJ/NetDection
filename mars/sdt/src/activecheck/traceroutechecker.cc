@@ -14,6 +14,7 @@
 
 #include "sdt/src/checkimpl/traceroute_query.h"
 
+#define MAX_TRACEROUT (1)
 using namespace mars::sdt;
 
 TraceRouteChecker::TraceRouteChecker() {
@@ -37,7 +38,11 @@ void TraceRouteChecker::__DoCheck(CheckRequestProfile &_check_request) {
     #if defined(ANDROID) || defined(__APPLE__)
     xinfo_function();
     //短连接通道
+    int counter = 0;
     for (CheckIPPorts_Iterator iter = _check_request.shortlink_items.begin(); iter != _check_request.shortlink_items.end(); ++iter) {
+        if (counter >= 1) {
+            break;
+        }
         for (std::vector<CheckIPPort>::iterator ipport = iter->second.begin(); ipport != iter->second.end(); ++ipport) {
             if (is_canceled_) {
                 xinfo2(TSF"traceRouteChecker is canceled.");
@@ -59,7 +64,7 @@ void TraceRouteChecker::__DoCheck(CheckRequestProfile &_check_request) {
                 xinfo2(TSF"checkfinished error with ret:%_",ret);
             }
         }
-        
+        counter++;
     }
         
     #endif

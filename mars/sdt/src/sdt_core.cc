@@ -86,6 +86,14 @@ void SdtCore::__InitCheckReq(CheckIPPorts& _longlink_items, CheckIPPorts& _short
 	check_request_.mode = _mode;
 	check_request_.total_timeout = _timeout;
     
+    if (check_request_.shortlink_items.empty()) {
+        xinfo2(TSF"shortlink_items is empty");
+    }
+        
+    if (check_request_.longlink_items.empty()) {
+        xinfo2(TSF"longlink_items is empty");
+    }
+    
     if (MODE_BASIC(_mode)) {
         xinfo2(TSF"__InitCheckReq MODE_BASIC");
         PingChecker* ping_checker = new PingChecker();
@@ -97,6 +105,14 @@ void SdtCore::__InitCheckReq(CheckIPPorts& _longlink_items, CheckIPPorts& _short
         xinfo2(TSF"MODE_BASIC  checkList is %_",check_list_.size());
         
     }
+    
+    if (MODE_LONG(_mode)) {
+           xinfo2(TSF"__InitCheckReq MODE_LONG");
+           TcpChecker* tcp_checker = new TcpChecker();
+           check_list_.push_back(tcp_checker);
+           xinfo2(TSF"MODE_LONG  checkList is %_",check_list_.size());
+    }
+    
     if (MODE_SHORT(_mode)) {
         xinfo2(TSF"__InitCheckReq MODE_SHORT");
 //    	check_request_.shortlink_items.insert(_shortlink_items.begin(), _shortlink_items.end());
@@ -104,12 +120,7 @@ void SdtCore::__InitCheckReq(CheckIPPorts& _longlink_items, CheckIPPorts& _short
         check_list_.push_back(http_checker);
         xinfo2(TSF"MODE_SHORT  checkList is %_",check_list_.size());
     }
-    if (MODE_LONG(_mode)) {
-        xinfo2(TSF"__InitCheckReq MODE_LONG");
-        TcpChecker* tcp_checker = new TcpChecker();
-        check_list_.push_back(tcp_checker);
-        xinfo2(TSF"MODE_LONG  checkList is %_",check_list_.size());
-    }
+   
     
 }
 
@@ -144,8 +155,11 @@ void SdtCore::__RunOn() {
             xinfo2(TSF"check_request finish");
             break;
         }
-        if (check_request_.check_status == kCheckNoBlock) {
+        if (check_request_.check_status == kCheckDNSNoBlock) {
             xinfo2(TSF"check_request faild at DNS");
+        }
+        if (check_request_.check_status == kCheckHTTPNoBlock) {
+            xinfo2(TSF"check_request faild at HTTP");
         }
         (*iter)->StartDoCheck(check_request_);
     }

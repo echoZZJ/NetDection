@@ -84,7 +84,7 @@ void DnsChecker::__DoCheck(CheckRequestProfile& _check_request) {
 		}
 
         _check_request.checkresult_profiles.push_back(profile);
-        _check_request.check_status = (ret >= 0 ? kCheckContinue : kCheckNoBlock);
+        _check_request.check_status = (ret >= 0 ? kCheckContinue : kCheckDNSNoBlock);
         if (ret < 0) {
             xinfo2(TSF"checkfinished error");
         }
@@ -134,7 +134,7 @@ void DnsChecker::__DoCheck(CheckRequestProfile& _check_request) {
 		}
 
         _check_request.checkresult_profiles.push_back(profile);
-        _check_request.check_status = (ret >= 0 ? kCheckContinue : kCheckNoBlock);
+        _check_request.check_status = (ret >= 0 ? kCheckContinue : kCheckDNSNoBlock);
         if (ret < 0) {
             xinfo2(TSF"checkfinished error");
         }

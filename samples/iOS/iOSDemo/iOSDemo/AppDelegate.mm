@@ -40,7 +40,8 @@
     [[NetworkService sharedInstance] setCallBack];
    
     [[NetworkService sharedInstance] setClientVersion:200];
-//116.85.2.13   
+//116.85.2.13
+    [[NetworkService sharedInstance] setLongLinkAddress:@"rtm-dichat.xiaojukeji.com" ports:@[@(5230),@(5223)]];
     [[NetworkService sharedInstance] setLongLinkAddress:@"rtm-dichat.xiaojukeji.com" port:5230];
 //    [[NetworkService sharedInstance] setLongLinkAddress:@"long.weixin.qq.com" port:80];
 //    [[NetworkService sharedInstance] setLongLinkAddress:@"localhost" port:8081 debugIP:@"127.0.0.1"];
@@ -48,10 +49,10 @@
     
     
     
-//    [[NetworkService sharedInstance] setShortLinkHosts:@[@"dichat-file.s3.didiyunapi.com",@"dichat-public.s3.didiyunapi.com",
-//    @"dichat-bifrost.xiaojukeji.com",@"im-dichat.xiaojukeji.com"] ports:@[@(443),@(80)]];
+    [[NetworkService sharedInstance] setShortLinkHosts:@[@"dichat-file.s3.didiyunapi.com",@"dichat-public.s3.didiyunapi.com",
+    @"dichat-bifrost.xiaojukeji.com",@"im-dichat.xiaojukeji.com"] ports:@[@(443),@(80)]];
     
-    [[NetworkService sharedInstance] setShortLinkHosts:@[@"dichat-file.s3.didiyunapi.com"] ports:@[@(443),@(80)]];
+//    [[NetworkService sharedInstance] setShortLinkHosts:@[@"dichat-file.s3.didiyunapi.com"] ports:@[@(443),@(80)]];
 //    [[NetworkService sharedInstance] reportEvent_OnForeground:YES];
 //    [[NetworkService sharedInstance] makesureLongLinkConnect];
 

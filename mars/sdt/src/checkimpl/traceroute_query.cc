@@ -40,6 +40,7 @@ using namespace mars::sdt;
 
 #define MAX_HOPS_LIMIT        255
 #define MAX_HOPS_DEFAULT    30
+#define OUT_LEN 1000
 
 struct hhistory
 {
@@ -106,7 +107,7 @@ void TraceRouteQuery::print_host(const char *a, const char *b, int both)
         plen += printf(" (%s)", b);
     if (plen >= HOST_COLUMN_SIZE)
         plen = HOST_COLUMN_SIZE - 1;
-    t_printf("%*s", HOST_COLUMN_SIZE - plen, "");
+    t_printf("print_host %*s", HOST_COLUMN_SIZE - plen, "");
 }
 
 /**
@@ -179,28 +180,37 @@ restart:
             } else if (cmsg->cmsg_type == IP_TTL) {
                 memcpy(&rethops, CMSG_DATA(cmsg), sizeof(rethops));
             } else {
-                t_printf("cmsg:%d\n ", cmsg->cmsg_type);
+               char temp[1024] = {0};
+               snprintf(temp, 1024, "cmsg:%d\n ", cmsg->cmsg_type);
+               tracerouteresult_.append(std::string(temp));
             }
         }
     }
     if (e == NULL) {
-        t_printf("no info\n");
+        xerror2(TSF"no info\n");
         return 0;
     }
     if (e->ee_origin == SO_EE_ORIGIN_LOCAL) {
-        t_printf("%2d?: %*s ", ttl, -(HOST_COLUMN_SIZE - 1), "[LOCALHOST]");
+        char temp[1024] = {0};
+        snprintf(temp, 1024, "%2d?: %*s ",ttl, -(HOST_COLUMN_SIZE - 1), "[LOCALHOST]");
+        tracerouteresult_.append(std::string(temp));
     } else if (e->ee_origin == SO_EE_ORIGIN_ICMP) {
         char abuf[128];
         struct sockaddr_in *sin = (struct sockaddr_in*)(e+1);
         struct hostent *h = NULL;
         char *idn = NULL;
-
+        char temp[1024] = {0};
         inet_ntop(AF_INET, &sin->sin_addr, abuf, sizeof(abuf));
 
-        if (sndhops>0)
-            t_printf("%2d:  ", sndhops);
-        else
-            t_printf("%2d?: ", ttl);
+        if (sndhops>0){
+            snprintf(temp, 1024, "sndhops%2d:  ",sndhops);
+            tracerouteresult_.append(std::string(temp));
+        }
+        else {
+            snprintf(temp, 1024, "ttl is %2d?:",ttl);
+            tracerouteresult_.append(std::string(temp));
+        }
+            
 
         if (!no_resolve || show_both) {
             fflush(stdout);
@@ -222,10 +232,15 @@ restart:
     }
 
     if (rettv) {
+        char temp[1024] = {0};
         int diff = (tv.tv_sec-rettv->tv_sec)*1000000+(tv.tv_usec-rettv->tv_usec);
-        t_printf("%3d.%03dms ", diff/1000, diff%1000);
-        if (broken_router)
-            t_printf("(This broken router returned corrupted payload) ");
+        snprintf(temp, 1024, "timecost: %3d.%03dms ", diff/1000, diff%1000);
+        tracerouteresult_.append(std::string(temp));
+        if (broken_router){
+            char temp[1024] = {0};
+            snprintf(temp, 1024, "(This broken router returned corrupted payload) ");
+            tracerouteresult_.append(std::string(temp));
+        }
     }
 
     switch (e->ee_errno) {
@@ -291,11 +306,9 @@ int TraceRouteQuery::probe_ttl(int fd, int ttl)
 {
     xinfo2(TSF"probe_ttl begin");
     int i;
-    struct probehdr *hdr;
-    struct probehdr t_hdr = {0};
-    memset(&t_hdr, 0, mtu);
-    hdr = (struct probehdr *)&t_hdr;
-//    memset(hdr, 0, mtu);
+    struct probehdr *hdr = (probehdr *)pktbuf;
+
+    memset(pktbuf, 0, mtu);
 restart:
     //尝试在发送不成功的情况下连续发送10次
     xinfo2(TSF"probe_ttl restart begin");
@@ -429,7 +442,7 @@ int TraceRouteQuery::doATracePath(int argc, char **argv)
         t_printf("\ngethostbyname: cant get host from hostname");
         return -1;
     }
-    xinfo2(TSF"host is %_",he->h_addr);
+    xinfo2(TSF"host is %_",he->h_name);
 #ifdef USE_IDN
     free(p);
 #endif
@@ -500,18 +513,20 @@ restart:
                 return 0;
             }else {
                 timeoutTTL++;
-                printf("%2d:  **********", ttl);
+                char temp[1024] = {0};
+                snprintf(temp, 1024, "address:%s with ttl: %2d:  **********", he->h_name,ttl);
+                tracerouteresult_.append(std::string(temp));
             }
         }
     }
-    printf("     Too many hops: pmtu %d\n", mtu);
+    t_printf("     Too many hops: pmtu %d\n", mtu);
 done:
     xinfo2(TSF"Resume: pmtu %_ \n",mtu);
-    printf("     Resume: pmtu %d \n", mtu);
+    t_printf("     Resume: pmtu %d \n", mtu);
     if (hops_to>=0)
-        printf("hops %d ", hops_to);
+        t_printf("hops %d ", hops_to);
     if (hops_from>=0)
-        printf("back %d ", hops_from);
+        t_printf("back %d ", hops_from);
     return 0;
 }
 
@@ -522,7 +537,7 @@ int TraceRouteQuery::t_RunTraceRouteQuery(int _querycount, int _interval/*S*/, i
     return  doATracePath(2, argv);
 }
 std::string TraceRouteQuery::GetTraceRoute() {
-    return tracerouteresult_;
+    return std::string("\nUsage\ntracepath [options] <destination>\nOptions:\n-4             use IPv4\n  -6             use IPv6\n  -b             print both name and ip\n  -l <length>    use packet <length>\n  -m <hops>      use maximum <hops>\n  -n             no dns name resolution\n  -p <port>      use destination <port>\n  -V             print version and exit\n  <destination>  dns name or ip address\nFor more details see tracepath(8).\n") + tracerouteresult_;
 }
 
 

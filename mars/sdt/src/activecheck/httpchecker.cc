@@ -94,9 +94,9 @@ void HttpChecker::__DoCheck(CheckRequestProfile& _check_request) {
             }
 
             _check_request.checkresult_profiles.push_back(profile);
-            _check_request.check_status = (ret >= 0 ? kCheckContinue : kCheckFinish);
+            _check_request.check_status = (ret >= 0 ? kCheckContinue : kCheckHTTPNoBlock);
             if (ret < 0) {
-                xinfo2(TSF"checkfinished error");
+                xinfo2(TSF"checkfinished error and check_status is:%_",_check_request.check_status);
             }
 			if (_check_request.total_timeout != UNUSE_TIMEOUT) {
 				_check_request.total_timeout -= cost_time;

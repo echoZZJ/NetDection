@@ -105,7 +105,8 @@ enum TcpErrCode {
 enum CheckStatus {
 	kCheckContinue = 0,
 	kCheckFinish = 1,
-    kCheckNoBlock = 2,
+    kCheckDNSNoBlock = 2,
+    kCheckHTTPNoBlock = 3,
 } ;
 
 extern void (*ReportNetCheckResult)(const std::vector<CheckResultProfile>& _check_results);

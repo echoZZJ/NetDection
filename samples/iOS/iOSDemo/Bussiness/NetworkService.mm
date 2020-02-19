@@ -114,6 +114,15 @@ static NetworkService * sharedSingleton = nil;
     ports.push_back(port);
     mars::stn::SetLonglinkSvrAddr(ipAddress, ports, "");
 }
+- (void)setLongLinkAddress:(NSString *)string ports:(NSArray<NSNumber *> *)ports {
+    std::string ipAddress([string UTF8String]);
+    std::vector<uint16_t> iports;
+    for (NSNumber* porsItem in ports) {
+        const unsigned short iPort = [porsItem unsignedShortValue];
+        iports.push_back(iPort);
+    }
+    mars::stn::SetLonglinkSvrAddr(ipAddress, iports, "");
+}
 
 - (void)makesureLongLinkConnect {
 //    mars::stn::MakesureLonglinkConnected();

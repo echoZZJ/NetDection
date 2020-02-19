@@ -42,6 +42,7 @@
 - (void)setClientVersion:(UInt32)clientVersion;
 //- (void)setShortLinkDebugIP:(NSString *)IP port:(const unsigned short)port;
 //- (void)setShortLinkPort:(const unsigned short)port;
+- (void)setLongLinkAddress:(NSString *)string ports:(NSArray<NSNumber *> *)ports;
 - (void)setLongLinkAddress:(NSString *)string port:(const unsigned short)port debugIP:(NSString *)IP;
 - (void)setLongLinkAddress:(NSString *)string port:(const unsigned short)port;
 - (void)setShortLinkHosts:(NSArray<NSString *> *)hosts ports:(NSArray<NSNumber *> *)ports;
