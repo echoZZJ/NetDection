@@ -15,6 +15,7 @@
 #include "sdt/src/checkimpl/traceroute_query.h"
 
 #define MAX_TRACEROUT (1)
+#define PORT_TRACETOUTE (443)
 using namespace mars::sdt;
 
 TraceRouteChecker::TraceRouteChecker() {
@@ -40,13 +41,16 @@ void TraceRouteChecker::__DoCheck(CheckRequestProfile &_check_request) {
     //短连接通道
     int counter = 0;
     for (CheckIPPorts_Iterator iter = _check_request.shortlink_items.begin(); iter != _check_request.shortlink_items.end(); ++iter) {
-        if (counter >= 1) {
-            break;
+        if (counter >= MAX_TRACEROUT) {
+            return;
         }
         for (std::vector<CheckIPPort>::iterator ipport = iter->second.begin(); ipport != iter->second.end(); ++ipport) {
             if (is_canceled_) {
                 xinfo2(TSF"traceRouteChecker is canceled.");
                 return;
+            }
+            if ((*ipport).port != PORT_TRACETOUTE){
+                continue;
             }
             CheckResultProfile profile;
             std::string host = (*ipport).ip.empty() ? DEFAULT_PING_HOST : (*ipport).ip;
@@ -55,7 +59,12 @@ void TraceRouteChecker::__DoCheck(CheckRequestProfile &_check_request) {
             profile.domain_name = iter->first;
             TraceRouteQuery traceQuery;
             xinfo2(TSF"t_RunTraceRouteQuery with host%_",host);
-            int ret = traceQuery.t_RunTraceRouteQuery(0, 0, 0, host.c_str());
+            int ret = 0;
+            #if defined(ANDROID)
+            ret = traceQuery.t_RunTraceRouteQuery(0, 0, 0, profile.domain_name.c_str());
+            #elif defined(__APPLE__)
+            ret = traceQuery.t_RunTraceRouteQuery(0, 0, 0, host.c_str());
+            #endif
             profile.error_code = ret;
             profile.traceRoute = traceQuery.GetTraceRoute();
             _check_request.checkresult_profiles.push_back(profile);

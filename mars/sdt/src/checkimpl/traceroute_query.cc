@@ -72,13 +72,16 @@ struct probehdr
 };
 
 int TraceRouteQuery::t_printf(const char *fmt, ...){
+    xinfo2(TSF"t_printf begin");
     va_list argptr;
-    int cnt;
-    va_start(argptr, fmt);
+    int n=0;
     char tempbuff[1024] = {0};
-    snprintf(tempbuff, 1024, fmt, argptr);
+    va_start(argptr, fmt);
+    n=vsnprintf (tempbuff, 1024, fmt, argptr); //写入字符串s
     tracerouteresult_.append(tempbuff);
-    return 1;
+    xinfo2(TSF"t_printf tracerouteresult_ is:%_",tracerouteresult_);
+    va_end(argptr);; //释放资源
+    return n; //返回写入的字符个数
 }
 
 /**
@@ -102,12 +105,14 @@ void data_wait(int fd)
 void TraceRouteQuery::print_host(const char *a, const char *b, int both)
 {
     int plen;
-    plen = t_printf("%s", a);
-    if (both)
-        plen += printf(" (%s)", b);
-    if (plen >= HOST_COLUMN_SIZE)
-        plen = HOST_COLUMN_SIZE - 1;
-    t_printf("print_host %*s", HOST_COLUMN_SIZE - plen, "");
+    char tempbuff[1024] = {0};
+    if (both){
+        snprintf(tempbuff, 1024, "host: %s(%s)",a,b);
+        tracerouteresult_.append(std::string(tempbuff));
+    } else {
+        snprintf(tempbuff, 1024, "host: %s",a);
+        tracerouteresult_.append(std::string(tempbuff));
+    }
 }
 
 /**
@@ -203,11 +208,11 @@ restart:
         inet_ntop(AF_INET, &sin->sin_addr, abuf, sizeof(abuf));
 
         if (sndhops>0){
-            snprintf(temp, 1024, "sndhops%2d:  ",sndhops);
+            snprintf(temp, 1024, "sndhops%2d:  \n",sndhops);
             tracerouteresult_.append(std::string(temp));
         }
         else {
-            snprintf(temp, 1024, "ttl is %2d?:",ttl);
+            snprintf(temp, 1024, "ttl is %2d? \n",ttl);
             tracerouteresult_.append(std::string(temp));
         }
             
@@ -321,7 +326,8 @@ restart:
         his[hisptr].hops = ttl;
         his[hisptr].sendtime = hdr->tv;
         if (sendto(fd, pktbuf, mtu-overhead, 0, (struct sockaddr*)&target, sizeof(target)) > 0){
-            xinfo2(TSF"sendto fd:%_,target:%_",fd,target.sin_port);
+            xinfo2(TSF"sendto fd:%_,target ip:%_",fd,inet_ntoa(target.sin_addr));
+            t_printf("sendto fd:%_,target ip:%_",fd,inet_ntoa(target.sin_addr));
             break;
         }
         res = recverr(fd, ttl);
@@ -338,6 +344,7 @@ restart:
     if (i<2) {
         data_wait(fd);
         if (recv(fd, pktbuf, mtu, MSG_DONTWAIT) > 0) {
+            xinfo2(TSF"%2d?: reply received 8)\n", ttl);
             t_printf("%2d?: reply received 8)\n", ttl);
             return 0;
         }
@@ -495,11 +502,12 @@ restart:
         xinfo2(TSF"restart begin");
         for (i=0; i<1; i++) {
             int old_mtu;
-
             old_mtu = mtu;
             res = probe_ttl(fd, ttl);
-            if (mtu != old_mtu)
+            if (mtu != old_mtu){
+                xinfo2(TSF"mtu is %_ old_mtu is%_",mtu,old_mtu);
                 goto restart;
+            }
             if (res == 0)
                 goto done;
             if (res > 0){
@@ -514,14 +522,14 @@ restart:
             }else {
                 timeoutTTL++;
                 char temp[1024] = {0};
-                snprintf(temp, 1024, "address:%s with ttl: %2d:  **********", he->h_name,ttl);
+                snprintf(temp, 1024, "\naddress:%s with ttl: %2d:  **********\n", he->h_name,ttl);
                 tracerouteresult_.append(std::string(temp));
             }
         }
     }
     t_printf("     Too many hops: pmtu %d\n", mtu);
 done:
-    xinfo2(TSF"Resume: pmtu %_ \n",mtu);
+    xinfo2(TSF"done begin Resume: pmtu %_ \n",mtu);
     t_printf("     Resume: pmtu %d \n", mtu);
     if (hops_to>=0)
         t_printf("hops %d ", hops_to);
@@ -537,7 +545,7 @@ int TraceRouteQuery::t_RunTraceRouteQuery(int _querycount, int _interval/*S*/, i
     return  doATracePath(2, argv);
 }
 std::string TraceRouteQuery::GetTraceRoute() {
-    return std::string("\nUsage\ntracepath [options] <destination>\nOptions:\n-4             use IPv4\n  -6             use IPv6\n  -b             print both name and ip\n  -l <length>    use packet <length>\n  -m <hops>      use maximum <hops>\n  -n             no dns name resolution\n  -p <port>      use destination <port>\n  -V             print version and exit\n  <destination>  dns name or ip address\nFor more details see tracepath(8).\n") + tracerouteresult_;
+    return std::string("\n traceroute result:\n") + tracerouteresult_;
 }
 
 
