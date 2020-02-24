@@ -58,7 +58,11 @@ int HttpChecker::StartDoCheck(CheckRequestProfile& _check_request) {
 
 void HttpChecker::__DoCheck(CheckRequestProfile& _check_request) {
     xinfo_function();
-
+    if (_check_request.total_timeout <= 0) {
+        _check_request.check_status = kCheckTimeOut;
+        xinfo2(TSF"HttpChecker timeout.");
+        return;
+    }
     for (CheckIPPorts_Iterator iter = _check_request.shortlink_items.begin(); iter != _check_request.shortlink_items.end(); ++iter) {
     	std::string host = iter->first;
     	for (std::vector<CheckIPPort>::iterator ipport = iter->second.begin(); ipport != iter->second.end(); ++ipport) {
@@ -66,6 +70,11 @@ void HttpChecker::__DoCheck(CheckRequestProfile& _check_request) {
             if (is_canceled_) {
                 xinfo2(TSF"HttpChecker is canceled.");
                 return;
+            }
+            if (_check_request.total_timeout < 0) {
+                _check_request.check_status = kCheckTimeOut;
+                xinfo2(TSF"http check, host: %_, timeout.", host);
+                break;
             }
             
     		CheckResultProfile profile;
@@ -98,9 +107,10 @@ void HttpChecker::__DoCheck(CheckRequestProfile& _check_request) {
             if (ret < 0) {
                 xinfo2(TSF"checkfinished error and check_status is:%_",_check_request.check_status);
             }
-			if (_check_request.total_timeout != UNUSE_TIMEOUT) {
+			if (_check_request.total_timeout != NETSNIFF_TIMEOUT) {
 				_check_request.total_timeout -= cost_time;
 				if (_check_request.total_timeout <= 0) {
+                    _check_request.check_status = kCheckTimeOut;
 					xinfo2(TSF"http check, host: %_, timeout.", host);
 					break;
 				}

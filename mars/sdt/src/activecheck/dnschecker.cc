@@ -45,7 +45,11 @@ int DnsChecker::StartDoCheck(CheckRequestProfile& _check_request) {
 
 void DnsChecker::__DoCheck(CheckRequestProfile& _check_request) {
     xinfo_function();
-
+    if (_check_request.total_timeout <= 0) {
+        _check_request.check_status = kCheckTimeOut;
+        xinfo2(TSF"DnsChecker timeout.");
+        return;
+    }
     //longlink host dns
     for (CheckIPPorts_Iterator iter = _check_request.longlink_items.begin(); iter != _check_request.longlink_items.end(); ++iter) {
         
@@ -61,7 +65,7 @@ void DnsChecker::__DoCheck(CheckRequestProfile& _check_request) {
 		profile.network_type = ::getNetInfo();
 
 		struct socket_ipinfo_t ipinfo;
-		int timeout = (_check_request.total_timeout == UNUSE_TIMEOUT ? DEFAULT_DNS_TIMEOUT : _check_request.total_timeout);
+		int timeout = (_check_request.total_timeout == NETSNIFF_TIMEOUT ? DEFAULT_DNS_TIMEOUT : _check_request.total_timeout);
         uint64_t start_time = gettickcount();
         int ret = socket_gethostbyname(profile.domain_name.c_str(), &ipinfo, timeout, NULL);
         uint64_t cost_time = gettickcount() - start_time;
@@ -89,9 +93,10 @@ void DnsChecker::__DoCheck(CheckRequestProfile& _check_request) {
             xinfo2(TSF"checkfinished error");
         }
 
-		if (_check_request.total_timeout != UNUSE_TIMEOUT) {
+		if (_check_request.total_timeout != NETSNIFF_TIMEOUT) {
 			_check_request.total_timeout -= cost_time;
 			if (_check_request.total_timeout <= 0) {
+                _check_request.check_status = kCheckTimeOut;
 				xinfo2(TSF"dns check, host: %0, timeout.", profile.domain_name);
 				break;
 			}
@@ -111,7 +116,7 @@ void DnsChecker::__DoCheck(CheckRequestProfile& _check_request) {
 		profile.netcheck_type = kDnsCheck;
 		profile.network_type = ::getNetInfo();
 		struct socket_ipinfo_t ipinfo;
-		int timeout = (_check_request.total_timeout == UNUSE_TIMEOUT ? DEFAULT_DNS_TIMEOUT : _check_request.total_timeout);
+		int timeout = (_check_request.total_timeout == NETSNIFF_TIMEOUT ? DEFAULT_DNS_TIMEOUT : _check_request.total_timeout);
         uint64_t start_time = gettickcount();
         int ret = socket_gethostbyname(profile.domain_name.c_str(), &ipinfo, timeout, NULL);
         uint64_t cost_time = gettickcount() - start_time;
@@ -138,9 +143,10 @@ void DnsChecker::__DoCheck(CheckRequestProfile& _check_request) {
         if (ret < 0) {
             xinfo2(TSF"checkfinished error");
         }
-		if (_check_request.total_timeout != UNUSE_TIMEOUT) {
+		if (_check_request.total_timeout != NETSNIFF_TIMEOUT) {
 			_check_request.total_timeout -= cost_time;
 			if (_check_request.total_timeout <= 0) {
+                _check_request.check_status = kCheckTimeOut;
 				xinfo2(TSF"dns check, host: %0, timeout.", profile.domain_name);
 				break;
 			}

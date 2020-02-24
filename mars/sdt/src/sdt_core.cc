@@ -155,6 +155,10 @@ void SdtCore::__RunOn() {
             xinfo2(TSF"check_request finish");
             break;
         }
+        if (check_request_.check_status == kCheckTimeOut) {
+            xinfo2(TSF"check_request timeout");
+            break;
+        }
         if (check_request_.check_status == kCheckDNSNoBlock) {
             xinfo2(TSF"check_request faild at DNS");
         }

@@ -113,7 +113,7 @@ struct CheckRequestProfile {
 	int	mode;
 	CheckStatus check_status;
 
-	uint32_t total_timeout;
+	int32_t total_timeout;
 
 	std::vector<CheckResultProfile> checkresult_profiles;
 

@@ -51,7 +51,11 @@ void PingChecker::__DoCheck(CheckRequestProfile& _check_request) {
 
 #if defined(ANDROID) || defined(__APPLE__)
     xinfo_function();
-
+    if (_check_request.total_timeout <= 0) {
+       _check_request.check_status = kCheckTimeOut;
+       xinfo2(TSF"PingChecker timeout.");
+       return;
+    }
     // longlink ip ping
     for (CheckIPPorts_Iterator iter = _check_request.longlink_items.begin(); iter != _check_request.longlink_items.end(); ++iter) {
 		for (std::vector<CheckIPPort>::iterator ipport = iter->second.begin(); ipport != iter->second.end(); ++ipport) {
@@ -69,7 +73,7 @@ void PingChecker::__DoCheck(CheckRequestProfile& _check_request) {
             profile.domain_name = iter->first;
 			uint64_t start_time = gettickcount();
 			PingQuery ping_query;
-			int ret = ping_query.RunPingQuery(0, 0, (UNUSE_TIMEOUT == _check_request.total_timeout ? 0 : _check_request.total_timeout / 1000), host.c_str());
+			int ret = ping_query.RunPingQuery(0, 0, (NETSNIFF_TIMEOUT == _check_request.total_timeout ? 0 : _check_request.total_timeout / 1000), host.c_str());
 			uint64_t cost_time = gettickcount() - start_time;
 
 			profile.error_code = ret;
@@ -101,9 +105,10 @@ void PingChecker::__DoCheck(CheckRequestProfile& _check_request) {
             if (ret < 0) {
                 xinfo2(TSF"checkfinished error");
             }
-			if (_check_request.total_timeout != UNUSE_TIMEOUT) {
+			if (_check_request.total_timeout == NETSNIFF_TIMEOUT) {
 				_check_request.total_timeout -= cost_time;
 				if (_check_request.total_timeout <= 0) {
+                    _check_request.check_status = kCheckTimeOut;
 					xinfo2(TSF"ping check, host: %_, timeout.", host);
 					break;
 				}
@@ -127,7 +132,7 @@ void PingChecker::__DoCheck(CheckRequestProfile& _check_request) {
             profile.domain_name = iter->first;
 			uint64_t start_time = gettickcount();
 			PingQuery ping_query;
-			int ret = ping_query.RunPingQuery(1, 0, (UNUSE_TIMEOUT == _check_request.total_timeout ? 0 : _check_request.total_timeout / 1000), host.c_str());
+			int ret = ping_query.RunPingQuery(1, 0, (NETSNIFF_TIMEOUT == _check_request.total_timeout ? 0 : _check_request.total_timeout / 1000), host.c_str());
 			uint64_t cost_time = gettickcount() - start_time;
 
 			profile.error_code = ret;
@@ -159,9 +164,10 @@ void PingChecker::__DoCheck(CheckRequestProfile& _check_request) {
             if (ret < 0) {
                 xinfo2(TSF"checkfinished error");
             }
-			if (_check_request.total_timeout != UNUSE_TIMEOUT) {
+			if (_check_request.total_timeout != NETSNIFF_TIMEOUT) {
 				_check_request.total_timeout -= cost_time;
 				if (_check_request.total_timeout <= 0) {
+                    _check_request.check_status = kCheckTimeOut;
 					xinfo2(TSF"ping check, host: %_, timeout.", host);
 					break;
 				}

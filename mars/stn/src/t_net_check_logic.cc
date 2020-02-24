@@ -100,7 +100,7 @@ void NetCheckLogic::__StartNetCheck() {
     
     int mode = (NET_CHECK_BASIC | NET_CHECK_LONG | NET_CHECK_SHORT);
     xinfo2(TSF"net check mode is %_",mode);
-    if (!longlink_check_items.empty() || !shortlink_check_items.empty()) StartActiveCheck(longlink_check_items, shortlink_check_items, mode, UNUSE_TIMEOUT);
+    if (!longlink_check_items.empty() || !shortlink_check_items.empty()) StartActiveCheck(longlink_check_items, shortlink_check_items, mode, NETSNIFF_TIMEOUT);
     else
         CancelActiveCheck();
 }

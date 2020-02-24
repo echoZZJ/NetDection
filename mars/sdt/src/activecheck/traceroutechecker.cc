@@ -38,6 +38,11 @@ int TraceRouteChecker::StartDoCheck(CheckRequestProfile &_check_request){
 void TraceRouteChecker::__DoCheck(CheckRequestProfile &_check_request) {
     #if defined(ANDROID) || defined(__APPLE__)
     xinfo_function();
+    if (_check_request.total_timeout <= 0) {
+        _check_request.check_status = kCheckTimeOut;
+        xinfo2(TSF"TraceRouteChecker timeout.");
+        return;
+    }
     //短连接通道
     int counter = 0;
     for (CheckIPPorts_Iterator iter = _check_request.shortlink_items.begin(); iter != _check_request.shortlink_items.end(); ++iter) {
@@ -52,6 +57,7 @@ void TraceRouteChecker::__DoCheck(CheckRequestProfile &_check_request) {
             if ((*ipport).port != PORT_TRACETOUTE){
                 continue;
             }
+            uint64_t start_time = gettickcount();
             CheckResultProfile profile;
             std::string host = (*ipport).ip.empty() ? DEFAULT_PING_HOST : (*ipport).ip;
             profile.ip = host;
@@ -65,6 +71,15 @@ void TraceRouteChecker::__DoCheck(CheckRequestProfile &_check_request) {
             #elif defined(__APPLE__)
             ret = traceQuery.t_RunTraceRouteQuery(0, 0, 0, host.c_str());
             #endif
+            uint64_t cost_time = gettickcount() - start_time;
+            if (_check_request.total_timeout != NETSNIFF_TIMEOUT) {
+                _check_request.total_timeout -= cost_time;
+                if (_check_request.total_timeout <= 0) {
+                    _check_request.check_status = kCheckTimeOut;
+                    xinfo2(TSF"traceroute check, host: %0, timeout.", profile.domain_name);
+                    return;
+                }
+            }
             profile.error_code = ret;
             profile.traceRoute = traceQuery.GetTraceRoute();
             _check_request.checkresult_profiles.push_back(profile);

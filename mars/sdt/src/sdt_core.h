@@ -43,7 +43,7 @@ class SdtCore {
 
   public:
 
-    void StartCheck(CheckIPPorts& _longlink_items, CheckIPPorts& _shortlink_items, int _mode, int _timeout = UNUSE_TIMEOUT);
+    void StartCheck(CheckIPPorts& _longlink_items, CheckIPPorts& _shortlink_items, int _mode, int _timeout = NETSNIFF_TIMEOUT);
     /*
      * Stop and cancel net check.
      */

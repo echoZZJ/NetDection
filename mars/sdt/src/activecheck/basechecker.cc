@@ -39,7 +39,8 @@ int BaseChecker::StartDoCheck(CheckRequestProfile& _check_request) {
     // timeout and finish net checker.
     if (_check_request.total_timeout <= 0) {
         xinfo2(TSF"req.total_timeout_=%_, check finish!", _check_request.total_timeout);
-        _check_request.check_status = kCheckFinish;
+//        _check_request.check_status = kCheckFinish;
+        _check_request.check_status = kCheckTimeOut;
         return 0;
     }
     __DoCheck(_check_request);

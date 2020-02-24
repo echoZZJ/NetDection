@@ -58,11 +58,13 @@
 #define DEFAULT_PING_INTERVAL       (1)        // 1s
 #define DEFAULT_TRACE_ROUTE_COUNT   (4)
 // For TCP
-#define DEFAULT_TCP_CONN_TIMEOUT 5000  // ms
+#define DEFAULT_TCP_CONN_TIMEOUT    (5*1000)   // 5000ms
 #define DEFAULT_TCP_RECV_TIMEOUT    (5*1000)   // 5000ms
 // For DNS
 #define DEFAULT_DNS_TIMEOUT         (3*1000)   // 3000ms
 // For net check timeout
+#define NETSNIFF_TIMEOUT            (90*1000)  //90s
+
 #define UNUSE_TIMEOUT               (INT_MAX)        // ms
 
 // For HTTP User agent.

@@ -49,7 +49,11 @@ int TcpChecker::StartDoCheck(CheckRequestProfile& _check_request) {
 
 void TcpChecker::__DoCheck(CheckRequestProfile& _check_request) {
     xinfo_function();
-
+    if (_check_request.total_timeout <= 0) {
+         _check_request.check_status = kCheckTimeOut;
+         xinfo2(TSF"TcpChecker");
+         return;
+    }
     for (CheckIPPorts_Iterator iter = _check_request.longlink_items.begin(); iter != _check_request.longlink_items.end(); ++iter) {
     	std::string host = iter->first;
     	for (std::vector<CheckIPPort>::iterator ipport = iter->second.begin(); ipport != iter->second.end(); ++ipport) {
@@ -63,7 +67,11 @@ void TcpChecker::__DoCheck(CheckRequestProfile& _check_request) {
     		profile.port = (*ipport).port;
 			profile.network_type = ::getNetInfo();
             profile.domain_name = iter->first;
-    		unsigned int timeout = UNUSE_TIMEOUT == _check_request.total_timeout ? DEFAULT_TCP_CONN_TIMEOUT : _check_request.total_timeout;
+            if (_check_request.total_timeout <= 0) {
+                _check_request.check_status =kCheckTimeOut;
+                break;
+            }
+    		unsigned int timeout = NETSNIFF_TIMEOUT == _check_request.total_timeout ? DEFAULT_TCP_CONN_TIMEOUT : _check_request.total_timeout;
 			xinfo2(TSF"tcp check ip: %0, port: %1, timeout: %2", profile.ip, profile.port, timeout);
 
     		uint64_t start_time = ::gettickcount();
@@ -109,9 +117,10 @@ void TcpChecker::__DoCheck(CheckRequestProfile& _check_request) {
             if (ret < 0) {
                 xinfo2(TSF"checkfinished error");
             }
-			if (_check_request.total_timeout != UNUSE_TIMEOUT) {
+			if (_check_request.total_timeout != NETSNIFF_TIMEOUT) {
 				_check_request.total_timeout -= cost_time;
 				if (_check_request.total_timeout <= 0) {
+                    _check_request.check_status = kCheckTimeOut;
 					xinfo2(TSF"tcp check, host: %0, timeout.", host);
 					break;
 				}

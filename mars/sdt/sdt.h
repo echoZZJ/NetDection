@@ -107,6 +107,7 @@ enum CheckStatus {
 	kCheckFinish = 1,
     kCheckDNSNoBlock = 2,
     kCheckHTTPNoBlock = 3,
+    kCheckTimeOut = 4,
 } ;
 
 extern void (*ReportNetCheckResult)(const std::vector<CheckResultProfile>& _check_results);
