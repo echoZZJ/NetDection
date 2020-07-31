@@ -36,8 +36,8 @@ public:
 void SetCallback(Callback* const callback);
 
   extern void (*StartNetWorkSniffering)();
-
-
+  extern void (*StartPingCheck)();
+extern void (*StartNetWorkCheck)(const std::string& type);
 // 'host' will be ignored when 'debugip' is not empty.
    extern void (*SetLonglinkSvrAddr)(const std::string& host, const std::vector<uint16_t> ports, const std::string& debugip);
    

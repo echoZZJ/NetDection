@@ -11,6 +11,7 @@ include(../comm/CMakeExtraFlags.txt)
 
 include_directories(.)
 include_directories(src)
+include_directories(proto)
 include_directories(..)
 include_directories(../..)
 include_directories(../comm)
@@ -19,6 +20,10 @@ include_directories(../openssl/include)
 
 file(GLOB SELF_TEMP_SRC_FILES RELATIVE ${PROJECT_SOURCE_DIR} src/*.cc src/*.h)
 source_group(src FILES ${SELF_TEMP_SRC_FILES})
+list(APPEND SELF_SRC_FILES ${SELF_TEMP_SRC_FILES})
+
+file(GLOB SELF_TEMP_SRC_FILES RELATIVE ${PROJECT_SOURCE_DIR} proto/*.cc proto/*.h)
+source_group(proto FILES ${SELF_TEMP_SRC_FILES})
 list(APPEND SELF_SRC_FILES ${SELF_TEMP_SRC_FILES})
 
 file(GLOB SELF_TEMP_SRC_FILES RELATIVE ${PROJECT_SOURCE_DIR} *.cc *.h)

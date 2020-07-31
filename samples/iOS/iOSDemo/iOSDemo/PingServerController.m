@@ -55,7 +55,8 @@
 //    //检测网络状态
 //    [[NetworkStatus sharedInstance] Start:[NetworkService sharedInstance]];
     [[NetworkService sharedInstance] createMars];
-    [[NetworkService sharedInstance] startNetSniffering];
+//    [[NetworkService sharedInstance] startNetSniffering];
+    [[NetworkService sharedInstance] startPingCheck];
 }
 
 

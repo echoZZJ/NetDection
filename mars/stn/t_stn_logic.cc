@@ -26,11 +26,45 @@
 #include "stn/src/t_net_core.h"//一定要放这里，Mac os 编译
 #include "stn/src/t_net_check_logic.h"
 
+#define PINGCheck (1 << 3)
+#define BasicCheck 1
+#define TCPCheck (1 << 1)
+#define HTTPCheck (1 << 2)
+
 namespace mars {
 namespace stn {
 static Callback* sg_callback = NULL;
 static const std::string kLibName = "stn";
 
+enum NetWorkCheckOperationType {
+    PingType = (1 << 3),
+    BasicType = 1,  //ping,dns,traceroute
+//    TraceRouteType = 2,
+    TcpType = (1 << 1),
+    HttpType = (1 << 2),
+    DefaultType = ((1 << 2) | (1 << 1) | 1),
+};
+
+static std::map<std::string, NetWorkCheckOperationType> const netCheckTable = {
+    {
+        "PING",NetWorkCheckOperationType::PingType
+    },
+    {
+        "BASIC",NetWorkCheckOperationType::BasicType
+    },
+    {
+        "DEFAULT",NetWorkCheckOperationType::DefaultType
+    },
+//    {
+//        "TraceRoute",NetWorkCheckOperationType::TraceRouteType
+//    },
+    {
+        "TCP",NetWorkCheckOperationType::TcpType
+    },
+    {
+        "HTTP",NetWorkCheckOperationType::HttpType
+    }
+};
 boost::signals2::signal<void (ErrCmdType _err_type, int _err_code, const std::string& _ip, uint16_t _port)> SignalOnLongLinkNetworkError;
 boost::signals2::signal<void (ErrCmdType _err_type, int _err_code, const std::string& _ip, const std::string& _host, uint16_t _port)> SignalOnShortLinkNetworkError;
 
@@ -51,6 +85,31 @@ void (*StartNetWorkSniffering)()
     NetCheckLogic().__StartNetCheck();
 };
 
+void (*StartPingCheck)()
+=[](){
+    StartNetWorkCheck("PING");
+//    NetCheckLogic().__StartNetCheckOption(PINGCheck);
+    
+};
+
+void (*StartNetWorkCheck)(const std::string& type)
+=[](const std::string& type){
+//    std::string checkType = type;
+//    std::find_if(netCheckTable.begin(), netCheckTable.end(), [&type](const NetWorkCheckOperationType _enum){
+//        return _enum;
+//    });
+    auto findtype = netCheckTable.find(type);
+    if(findtype != netCheckTable.end()) {
+        NetCheckLogic().__StartNetCheckOption(findtype->second);
+    }
+//    netCheckTable.find(_operationType);
+    /**
+     auto find_it = std::find_if(content.lst_runloop_info.begin(), content.lst_runloop_info.end(),
+                                 [&_message](const RunLoopInfo& _v){ return _message == _v.runing_message_id; });
+     
+     if (find_it != content.lst_runloop_info.end())  { return true; }
+     */
+};
 
 void (*SetLonglinkSvrAddr)(const std::string& host, const std::vector<uint16_t> ports, const std::string& debugip)
 = [](const std::string& host, const std::vector<uint16_t> ports, const std::string& debugip) {

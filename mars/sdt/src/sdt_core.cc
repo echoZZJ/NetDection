@@ -94,6 +94,13 @@ void SdtCore::__InitCheckReq(CheckIPPorts& _longlink_items, CheckIPPorts& _short
         xinfo2(TSF"longlink_items is empty");
     }
     
+    if (MODE_PING(_mode)) {
+        xinfo2(TSF"__InitCheckReq MODE_PING");
+        PingChecker* ping_checker = new PingChecker();
+        check_list_.push_back(ping_checker);
+        xinfo2(TSF"MODE_BASIC  checkList is %_",check_list_.size());
+    }
+    
     if (MODE_BASIC(_mode)) {
         xinfo2(TSF"__InitCheckReq MODE_BASIC");
         PingChecker* ping_checker = new PingChecker();

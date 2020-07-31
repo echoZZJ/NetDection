@@ -23,6 +23,7 @@ COMM_COPY_HEADER_FILES = {
             "mars/stn/stn.h": "stn",
             "mars/stn/t_stn_logic.h": "stn",
             "mars/stn/proto/stnproto_logic.h": "stn",
+            "mars/stn/proto/longlink_packer.h": "stn",
             "mars/baseevent/base_logic.h": "baseevent",
             "mars/comm/xlogger/preprocessor.h": "xlog",
             "mars/comm/xlogger/xloggerbase.h": "xlog",

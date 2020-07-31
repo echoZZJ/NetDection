@@ -35,8 +35,7 @@
 #import <mars/xlog/xlogger.h>
 #import <mars/xlog/xloggerbase.h>
 #import <mars/xlog/appender.h>
-
-#import "stnproto_logic.h"
+#import <mars/stn/stnproto_logic.h>
 
 
 using namespace mars::stn;
@@ -201,15 +200,17 @@ static NetworkService * sharedSingleton = nil;
 }
 
 #pragma mark NetworkStatusDelegate
--(void) ReachabilityChange:(UInt32)uiFlags {
-    
+- (void)ReachabilityChange:(UInt32)uiFlags {
     if ((uiFlags & kSCNetworkReachabilityFlagsConnectionRequired) == 0) {
         mars::baseevent::OnNetworkChange();
     }
-    
 }
 - (void)startNetSniffering {
-    mars::stn:: StartNetWorkSniffering();
+    mars::stn::StartNetWorkSniffering();
+}
+
+- (void)startPingCheck {
+    mars::stn::StartPingCheck();
 }
 @end
 

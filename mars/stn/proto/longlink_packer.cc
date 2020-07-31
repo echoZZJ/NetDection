@@ -25,9 +25,9 @@
 #endif // !WIN32
 
 #ifdef __APPLE__
-#include "mars/xlog/xlogger.h"
+// #include "mars/xlog/xlogger.h"
 #else
-#include "mars/comm/xlogger/xlogger.h"
+// #include "mars/comm/xlogger/xlogger.h"
 #endif
 #include "mars/comm/autobuffer.h"
 #include "mars/stn/stn.h"

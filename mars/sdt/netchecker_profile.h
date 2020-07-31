@@ -61,7 +61,19 @@ struct CheckResultProfile {
         traceRoute.clear();
 	}
     std::string toJson() {
-        return std::string("{") + "\"netcheck_type\":"+ "\""+std::to_string(netcheck_type)+"\""+ "," +"\"error_code\":"+"\""+std::to_string(error_code)+"\""+","+"\"network_type\":"+"\""+std::to_string(network_type)+"\""+","+"\"rtt_str\":"+"\""+rtt_str.substr(0,rtt_str.find(".")+3)+"ms"+"\""+","+"\"domain_name\":"+"\""+domain_name+"\""+","+"\"rtt\":"+"\""+std::to_string(rtt)+"\""+","+"\"ip\":"+"\""+ip+"\""+","+"\"ip1\":"+"\""+ip1+"\""+","+"\"ip2\":"+"\""+ip2+"\""+","+"\"traceRoute\":"+"\""+traceRoute+"\""+","+"\"url\":"+"\""+url+"\""+std::string("}");
+        if(netcheck_type == kPingCheck){
+            return std::string("{") + "\"netcheck_type\":"+ "\""+std::to_string(netcheck_type)+"\""+ "," +"\"error_code\":"+"\""+std::to_string(error_code)+"\""+","+"\"network_type\":"+"\""+std::to_string(network_type)+"\""+","+"\"rtt_str\":"+"\""+rtt_str.substr(0,rtt_str.find(".")+3)+"ms"+"\""+","+"\"domain_name\":"+"\""+domain_name+"\""+","+"\"ip\":"+"\""+ip+"\""+","+"\"url\":"+"\""+url+"\""+std::string("}");
+        }
+        if(netcheck_type == kDnsCheck){
+            return std::string("{") + "\"netcheck_type\":"+ "\""+std::to_string(netcheck_type)+"\""+ "," +"\"error_code\":"+"\""+std::to_string(error_code)+"\""+","+"\"network_type\":"+"\""+std::to_string(network_type)+"\""+","+"\"rtt_str\":"+"\""+rtt_str.substr(0,rtt_str.find(".")+3)+"ms"+"\""+","+"\"domain_name\":"+"\""+domain_name+"\""+","+"\"rtt\":"+"\""+std::to_string(rtt)+"\""+","+"\"ip\":"+"\""+ip+"\""+","+"\"ip1\":"+"\""+ip1+"\""+","+"\"ip2\":"+"\""+ip2+"\""+","+"\"traceRoute\":"+"\""+traceRoute+"\""+","+"\"url\":"+"\""+url+"\""+std::string("}");
+        }
+        if(netcheck_type == kTcpCheck){
+            return std::string("{") + "\"netcheck_type\":"+ "\""+std::to_string(netcheck_type)+"\""+ "," +"\"error_code\":"+"\""+std::to_string(error_code)+"\""+","+"\"network_type\":"+"\""+std::to_string(network_type)+"\""+","+"\"rtt_str\":"+"\""+rtt_str.substr(0,rtt_str.find(".")+3)+"ms"+"\""+","+"\"domain_name\":"+"\""+domain_name+"\""+","+"\"rtt\":"+"\""+std::to_string(rtt)+"\""+","+"\"ip\":"+"\""+ip+"\""+","+"\"ip1\":"+"\""+ip1+"\""+","+"\"ip2\":"+"\""+ip2+"\""+","+"\"traceRoute\":"+"\""+traceRoute+"\""+","+"\"url\":"+"\""+url+"\""+std::string("}");
+        }
+        if(netcheck_type == kHttpCheck){
+            return std::string("{") + "\"netcheck_type\":"+ "\""+std::to_string(netcheck_type)+"\""+ "," +"\"error_code\":"+"\""+std::to_string(error_code)+"\""+","+"\"network_type\":"+"\""+std::to_string(network_type)+"\""+","+"\"rtt_str\":"+"\""+rtt_str.substr(0,rtt_str.find(".")+3)+"ms"+"\""+","+"\"domain_name\":"+"\""+domain_name+"\""+","+"\"rtt\":"+"\""+std::to_string(rtt)+"\""+","+"\"ip\":"+"\""+ip+"\""+","+"\"ip1\":"+"\""+ip1+"\""+","+"\"ip2\":"+"\""+ip2+"\""+","+"\"traceRoute\":"+"\""+traceRoute+"\""+","+"\"url\":"+"\""+url+"\""+std::string("}");
+        }
+//        return std::string("{") + "\"netcheck_type\":"+ "\""+std::to_string(netcheck_type)+"\""+ "," +"\"error_code\":"+"\""+std::to_string(error_code)+"\""+","+"\"network_type\":"+"\""+std::to_string(network_type)+"\""+","+"\"rtt_str\":"+"\""+rtt_str.substr(0,rtt_str.find(".")+3)+"ms"+"\""+","+"\"domain_name\":"+"\""+domain_name+"\""+","+"\"rtt\":"+"\""+std::to_string(rtt)+"\""+","+"\"ip\":"+"\""+ip+"\""+","+"\"ip1\":"+"\""+ip1+"\""+","+"\"ip2\":"+"\""+ip2+"\""+","+"\"traceRoute\":"+"\""+traceRoute+"\""+","+"\"url\":"+"\""+url+"\""+std::string("}");
     }
 
 	int netcheck_type;	//ping dns tcp http

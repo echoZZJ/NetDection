@@ -69,6 +69,7 @@
 
 
 - (void)startNetSniffering;
+- (void)startPingCheck;
 - (void)clearNetLink;
 - (void)setUpLocalHost;
 @end

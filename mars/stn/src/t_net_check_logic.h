@@ -26,7 +26,7 @@ class NetCheckLogic {
     NetCheckLogic();
     ~NetCheckLogic();
     void __StartNetCheck();
-    
+    void __StartNetCheckOption(uint16_t optionType);
     private:
     struct NetTaskStatusItem{
         uint32_t records;
