@@ -80,13 +80,6 @@ void (*StartNetWorkSniffering)()
     NetCheckLogic().__StartNetCheck();
 };
 
-void (*StartPingCheck)()
-=[](){
-    StartNetWorkCheck("PING");
-//    NetCheckLogic().__StartNetCheckOption(PINGCheck);
-    
-};
-
 void (*StartNetWorkCheck)(const std::string& type)
 =[](const std::string& type){
 //    std::string checkType = type;

@@ -94,13 +94,13 @@ struct CheckResultProfile {
         std::string errorStr = (error_code == 0) ? "success" : "fail";
        
         if(netcheck_type == kPingCheck){
-            return std::string("{") + "\"netcheck_type\":"+ "\""+"PING"+"\""+ "," +"\"error_code\":"+"\""+errorStr+"\""+","+"\"network_type\":"+"\""+netWorkContent()+"\""+","+"\"rtt_str\":"+"\""+rtt_str.substr(0,rtt_str.find(".")+3)+"ms"+"\""+","+"\"domain_name\":"+"\""+domain_name+"\""+","+"\"ip\":"+"\""+ip+"\""+","+"\"url\":"+"\""+url+"\""+std::string("}");
+            return std::string("{") + "\"netcheck_type\":"+ "\""+"PING"+"\""+ "," +"\"error_code\":"+"\""+errorStr+"\""+","+"\"network_type\":"+"\""+netWorkContent()+"\""+","+"\"rtt_str\":"+"\""+rtt_str.substr(0,rtt_str.find(".")+3)+"\""+","+"\"domain_name\":"+"\""+domain_name+"\""+","+"\"ip\":"+"\""+ip+"\""+","+"\"url\":"+"\""+url+"\""+std::string("}");
         }
         if(netcheck_type == kDnsCheck){
             return std::string("{") + "\"netcheck_type\":"+ "\""+ "DNS"+ "\""+"," +"\"error_code\":"+"\""+errorStr+"\""+","+"\"network_type\":"+"\""+netWorkContent()+"\""+","+"\"domain_name\":"+"\""+domain_name+"\""+","+"\"ip\":"+"\""+ip+"\""+","+"\"ip1\":"+"\""+ip1+"\""+","+"\"ip2\":"+"\""+ip2+"\""+","+"\"url\":"+"\""+url+"\""+std::string("}");
         }
         if(netcheck_type == kTcpCheck){
-            return std::string("{") + "\"netcheck_type\":"+ "\""+"TCP"+"\""+ "," +"\"error_code\":"+"\""+errorStr+"\""+","+"\"network_type\":"+"\""+netWorkContent()+"\""+","+"\"rtt_str\":"+"\""+rtt_str.substr(0,rtt_str.find(".")+3)+"ms"+"\""+","+"\"domain_name\":"+"\""+domain_name+"\""+","+"\"rtt\":"+"\""+std::to_string(rtt)+"\""+","+"\"url\":"+"\""+url+"\""+std::string("}");
+            return std::string("{") + "\"netcheck_type\":"+ "\""+"TCP"+"\""+ "," +"\"error_code\":"+"\""+errorStr+"\""+","+"\"network_type\":"+"\""+netWorkContent()+"\""+","+"\"rtt_str\":"+"\""+rtt_str.substr(0,rtt_str.find(".")+3)+"\""+","+"\"domain_name\":"+"\""+domain_name+"\""+","+"\"rtt\":"+"\""+std::to_string(rtt)+"\""+","+"\"url\":"+"\""+url+"\""+std::string("}");
         }
         if(netcheck_type == kHttpCheck){
             return std::string("{") + "\"netcheck_type\":"+ "\""+"HTTP"+"\""+ "," +"\"error_code\":"+"\""+errorStr+"\""+","+"\"network_type\":"+"\""+netWorkContent()+"\""+","+"\"domain_name\":"+"\""+domain_name+"\""+","+"\"httpRequestStatusCode\":"+"\""+std::to_string(status_code)+"\""+","+"\"url\":"+"\""+url+"\""+std::string("}");
