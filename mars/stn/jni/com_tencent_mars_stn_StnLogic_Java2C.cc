@@ -79,6 +79,17 @@ JNIEXPORT void JNICALL Java_com_tencent_mars_stn_StnLogic_startNetWorkSniffering
  * Method:    setLonglinkSvrAddr
  * Signature: (Ljava/lang/String;[ILjava/lang/String;)V
  */
+DEFINE_FIND_STATIC_METHOD(KJava2C_startNetWorkCheck, KNetJava2C, "startNetWorkCheck","(Ljava/lang/String)V")
+JNIEXPORT void JNICALL Java_com_tencent_mars_stn_StnLogic_startNetWorkSniffering
+   (JNIEnv *_env,jclass ,jstring _type) {
+      std::string type = (NULL == _type ? "" : ScopedJstring(_env, _type).GetChar());
+      StartNetWorkCheck(type);
+ }
+/*
+ * Class:     com_tencent_mars_stn_StnLogic_Java2C
+ * Method:    setLonglinkSvrAddr
+ * Signature: (Ljava/lang/String;[ILjava/lang/String;)V
+ */
 DEFINE_FIND_STATIC_METHOD(KJava2C_setLonglinkSvrAddr, KNetJava2C, "setLonglinkSvrAddr", "(Ljava/lang/String;[ILjava/lang/String;)V")
 JNIEXPORT void JNICALL Java_com_tencent_mars_stn_StnLogic_setLonglinkSvrAddr
   (JNIEnv *_env, jclass, jstring _host, jintArray _ports, jstring _debug_ip) {

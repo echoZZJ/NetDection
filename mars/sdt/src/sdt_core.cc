@@ -43,6 +43,7 @@ using namespace mars::sdt;
 #define TYPE_DNS "DNS"
 #define TYPE_HTPP "HTTP"
 #define TYPE_TCP "TCP"
+#define TYPE_TRACEROUTE "TraceRoute"
 
 SdtCore::SdtCore()
     : thread_(boost::bind(&SdtCore::__RunOn, this))
@@ -111,6 +112,18 @@ void SdtCore::__InitCheckReq(CheckIPPorts& _longlink_items, CheckIPPorts& _short
         check_list_.push_back(trace_checker);
         xinfo2(TSF"MODE_BASIC  checkList is %_",check_list_.size());
         
+    }
+    if (MODE_TRACEROUTE(_mode)) {
+        xinfo2(TSF"__InitCheckReq MODE_TRACEROUTE");
+        TraceRouteChecker * trace_checker = new TraceRouteChecker();
+        check_list_.push_back(trace_checker);
+        xinfo2(TSF"MODE_BASIC  checkList is %_",check_list_.size());
+    }
+    if (MODE_DNS(_mode)) {
+        xinfo2(TSF"__InitCheckReq MODE_DNS");
+        DnsChecker* dns_checker = new DnsChecker();
+        check_list_.push_back(dns_checker);
+        xinfo2(TSF"MODE_BASIC  checkList is %_",check_list_.size());
     }
     
     if (MODE_LONG(_mode)) {
@@ -194,6 +207,7 @@ void SdtCore::__DumpCheckResult() {
     std::vector<std::string> httpVec;
     std::vector<std::string> dnsVec;
     std::vector<std::string> tcpVec;
+    std::vector<std::string> traceRouteVec;
     std::map<const std::string, std::vector<std::string>> dump_res;
     for (; iter != check_request_.checkresult_profiles.end(); ++iter) {
         XMessage res_str;
@@ -232,9 +246,14 @@ void SdtCore::__DumpCheckResult() {
     if (!dnsVec.empty()) {
         dump_res.insert(std::pair<const std::string, std::vector<std::string>>(TYPE_DNS,dnsVec));
     }
+    if (!traceRouteVec.empty()) {
+        dump_res.insert(std::pair<const std::string, std::vector<std::string>>(TYPE_TRACEROUTE,traceRouteVec));
+    }
     dump_res.insert(std::pair<const std::string, std::vector<std::string>>("report",resJsonVec));
     xinfo2(TSF"dump finished");
+    //generate network report for developers
     dumpNetReportRes(dump_res);
+    //display  user's network check UI in app
     dumpNetSniffRes(dump_res,false);
 }
 

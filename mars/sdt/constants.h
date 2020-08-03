@@ -24,6 +24,8 @@
 #define NET_CHECK_LONG (1 << 1)
 #define NET_CHECK_SHORT (1 << 2)
 #define NET_CHECK_PING (1 << 3)
+#define NET_CHECK_TRACEROUTE (1 << 4)
+#define NET_CHECK_DNS (1 << 5)
 
 
 // Error sequence.
@@ -33,6 +35,8 @@
 #define MODE_LONG(mode) ((mode) & NET_CHECK_LONG)
 #define MODE_SHORT(mode) ((mode) & NET_CHECK_SHORT)
 #define MODE_PING(mode) ((mode) & NET_CHECK_PING)
+#define MODE_TRACEROUTE(mode) ((mode) & NET_CHECK_TRACEROUTE)
+#define MODE_DNS(mode) ((mode) & NET_CHECK_DNS)
 
 // For default host.
 #define DEFAULT_HTTP_HOST "www.qq.com"

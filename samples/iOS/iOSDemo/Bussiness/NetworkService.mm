@@ -210,7 +210,7 @@ static NetworkService * sharedSingleton = nil;
 }
 
 - (void)startPingCheck {
-    mars::stn::StartPingCheck();
+    mars::stn::StartNetWorkCheck("TRACEROUTE");
 }
 @end
 

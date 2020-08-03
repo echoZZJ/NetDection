@@ -102,6 +102,7 @@ std::map<const std::string, std::vector<CheckResultProfile>> (*ReformatNetCheckR
         std::vector<CheckResultProfile> DNSVec;
         std::vector<CheckResultProfile> TCPVec;
         std::vector<CheckResultProfile> HTTPVec;
+        std::vector<CheckResultProfile> TraceRouteVec;
         size_t resLength = _check_results.size();
         for(size_t i = 0; i < resLength; i++){
             CheckResultProfile resItem = _check_results[i];
@@ -117,6 +118,9 @@ std::map<const std::string, std::vector<CheckResultProfile>> (*ReformatNetCheckR
             if(resItem.netcheck_type == kHttpCheck){
                 HTTPVec.push_back(resItem);
             }
+            if(resItem.netcheck_type == kTracerouteCheck){
+                TraceRouteVec.push_back(resItem);
+            }
         }
         if(!pingVec.empty()){
             resDic.insert(std::pair<std::string, std::vector<CheckResultProfile>>("PING",pingVec));
@@ -129,6 +133,9 @@ std::map<const std::string, std::vector<CheckResultProfile>> (*ReformatNetCheckR
         }
         if(!HTTPVec.empty()){
             resDic.insert(std::pair<std::string, std::vector<CheckResultProfile>>("HTTP",HTTPVec));
+        }
+        if(!TraceRouteVec.empty()) {
+            resDic.insert(std::pair<std::string, std::vector<CheckResultProfile>>("TraceRoute",TraceRouteVec));
         }
         return resDic;
 };

@@ -27,6 +27,8 @@
 
 #include "mars/sdt/sdt.h"
 #include "mars/sdt/constants.h"
+#include "comm/platform_comm.h"
+
 
 namespace mars {
 namespace sdt  {
@@ -60,20 +62,53 @@ struct CheckResultProfile {
 		ip2.clear();
         traceRoute.clear();
 	}
+    std::string netWorkContent() {
+        std::string netType = "";
+         switch (::getNetInfo()) {
+            case kNoNet: {
+                netType = "No Net";
+            }
+                break;
+            case kWifi: {
+                netType = "WIFI";
+            }
+                break;
+            case kMobile: {
+                netType = "Mobile";
+            }
+                break;
+                
+            case kOtherNet: {
+                netType = "Other";
+            }
+                break;
+                
+             default:{
+                netType = "UnKnow";
+             }
+                break;
+         }
+        return netType;
+    }
     std::string toJson() {
+        std::string errorStr = (error_code == 0) ? "success" : "fail";
+       
         if(netcheck_type == kPingCheck){
-            return std::string("{") + "\"netcheck_type\":"+ "\""+std::to_string(netcheck_type)+"\""+ "," +"\"error_code\":"+"\""+std::to_string(error_code)+"\""+","+"\"network_type\":"+"\""+std::to_string(network_type)+"\""+","+"\"rtt_str\":"+"\""+rtt_str.substr(0,rtt_str.find(".")+3)+"ms"+"\""+","+"\"domain_name\":"+"\""+domain_name+"\""+","+"\"ip\":"+"\""+ip+"\""+","+"\"url\":"+"\""+url+"\""+std::string("}");
+            return std::string("{") + "\"netcheck_type\":"+ "\""+"PING"+"\""+ "," +"\"error_code\":"+"\""+errorStr+"\""+","+"\"network_type\":"+"\""+netWorkContent()+"\""+","+"\"rtt_str\":"+"\""+rtt_str.substr(0,rtt_str.find(".")+3)+"ms"+"\""+","+"\"domain_name\":"+"\""+domain_name+"\""+","+"\"ip\":"+"\""+ip+"\""+","+"\"url\":"+"\""+url+"\""+std::string("}");
         }
         if(netcheck_type == kDnsCheck){
-            return std::string("{") + "\"netcheck_type\":"+ "\""+std::to_string(netcheck_type)+"\""+ "," +"\"error_code\":"+"\""+std::to_string(error_code)+"\""+","+"\"network_type\":"+"\""+std::to_string(network_type)+"\""+","+"\"rtt_str\":"+"\""+rtt_str.substr(0,rtt_str.find(".")+3)+"ms"+"\""+","+"\"domain_name\":"+"\""+domain_name+"\""+","+"\"rtt\":"+"\""+std::to_string(rtt)+"\""+","+"\"ip\":"+"\""+ip+"\""+","+"\"ip1\":"+"\""+ip1+"\""+","+"\"ip2\":"+"\""+ip2+"\""+","+"\"traceRoute\":"+"\""+traceRoute+"\""+","+"\"url\":"+"\""+url+"\""+std::string("}");
+            return std::string("{") + "\"netcheck_type\":"+ "\""+ "DNS"+ "\""+"," +"\"error_code\":"+"\""+errorStr+"\""+","+"\"network_type\":"+"\""+netWorkContent()+"\""+","+"\"domain_name\":"+"\""+domain_name+"\""+","+"\"ip\":"+"\""+ip+"\""+","+"\"ip1\":"+"\""+ip1+"\""+","+"\"ip2\":"+"\""+ip2+"\""+","+"\"url\":"+"\""+url+"\""+std::string("}");
         }
         if(netcheck_type == kTcpCheck){
-            return std::string("{") + "\"netcheck_type\":"+ "\""+std::to_string(netcheck_type)+"\""+ "," +"\"error_code\":"+"\""+std::to_string(error_code)+"\""+","+"\"network_type\":"+"\""+std::to_string(network_type)+"\""+","+"\"rtt_str\":"+"\""+rtt_str.substr(0,rtt_str.find(".")+3)+"ms"+"\""+","+"\"domain_name\":"+"\""+domain_name+"\""+","+"\"rtt\":"+"\""+std::to_string(rtt)+"\""+","+"\"ip\":"+"\""+ip+"\""+","+"\"ip1\":"+"\""+ip1+"\""+","+"\"ip2\":"+"\""+ip2+"\""+","+"\"traceRoute\":"+"\""+traceRoute+"\""+","+"\"url\":"+"\""+url+"\""+std::string("}");
+            return std::string("{") + "\"netcheck_type\":"+ "\""+"TCP"+"\""+ "," +"\"error_code\":"+"\""+errorStr+"\""+","+"\"network_type\":"+"\""+netWorkContent()+"\""+","+"\"rtt_str\":"+"\""+rtt_str.substr(0,rtt_str.find(".")+3)+"ms"+"\""+","+"\"domain_name\":"+"\""+domain_name+"\""+","+"\"rtt\":"+"\""+std::to_string(rtt)+"\""+","+"\"url\":"+"\""+url+"\""+std::string("}");
         }
         if(netcheck_type == kHttpCheck){
-            return std::string("{") + "\"netcheck_type\":"+ "\""+std::to_string(netcheck_type)+"\""+ "," +"\"error_code\":"+"\""+std::to_string(error_code)+"\""+","+"\"network_type\":"+"\""+std::to_string(network_type)+"\""+","+"\"rtt_str\":"+"\""+rtt_str.substr(0,rtt_str.find(".")+3)+"ms"+"\""+","+"\"domain_name\":"+"\""+domain_name+"\""+","+"\"rtt\":"+"\""+std::to_string(rtt)+"\""+","+"\"ip\":"+"\""+ip+"\""+","+"\"ip1\":"+"\""+ip1+"\""+","+"\"ip2\":"+"\""+ip2+"\""+","+"\"traceRoute\":"+"\""+traceRoute+"\""+","+"\"url\":"+"\""+url+"\""+std::string("}");
+            return std::string("{") + "\"netcheck_type\":"+ "\""+"HTTP"+"\""+ "," +"\"error_code\":"+"\""+errorStr+"\""+","+"\"network_type\":"+"\""+netWorkContent()+"\""+","+"\"domain_name\":"+"\""+domain_name+"\""+","+"\"httpRequestStatusCode\":"+"\""+std::to_string(status_code)+"\""+","+"\"url\":"+"\""+url+"\""+std::string("}");
         }
-//        return std::string("{") + "\"netcheck_type\":"+ "\""+std::to_string(netcheck_type)+"\""+ "," +"\"error_code\":"+"\""+std::to_string(error_code)+"\""+","+"\"network_type\":"+"\""+std::to_string(network_type)+"\""+","+"\"rtt_str\":"+"\""+rtt_str.substr(0,rtt_str.find(".")+3)+"ms"+"\""+","+"\"domain_name\":"+"\""+domain_name+"\""+","+"\"rtt\":"+"\""+std::to_string(rtt)+"\""+","+"\"ip\":"+"\""+ip+"\""+","+"\"ip1\":"+"\""+ip1+"\""+","+"\"ip2\":"+"\""+ip2+"\""+","+"\"traceRoute\":"+"\""+traceRoute+"\""+","+"\"url\":"+"\""+url+"\""+std::string("}");
+        if(netcheck_type == kTracerouteCheck){
+             return std::string("{") + "\"netcheck_type\":"+ "\""+"HTTP"+"\""+ "," +"\"error_code\":"+"\""+errorStr+"\""+","+"\"network_type\":"+"\""+netWorkContent()+"\""+","+"\"domain_name\":"+"\""+domain_name+"\""+","+"\n"+"\"traceRoute\":"+"\""+traceRoute+"\""+"\n"+","+"\"url\":"+"\""+url+"\""+std::string("}");
+        }
+        return "";
     }
 
 	int netcheck_type;	//ping dns tcp http

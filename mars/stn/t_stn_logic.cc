@@ -26,11 +26,6 @@
 #include "stn/src/t_net_core.h"//一定要放这里，Mac os 编译
 #include "stn/src/t_net_check_logic.h"
 
-#define PINGCheck (1 << 3)
-#define BasicCheck 1
-#define TCPCheck (1 << 1)
-#define HTTPCheck (1 << 2)
-
 namespace mars {
 namespace stn {
 static Callback* sg_callback = NULL;
@@ -39,7 +34,7 @@ static const std::string kLibName = "stn";
 enum NetWorkCheckOperationType {
     PingType = (1 << 3),
     BasicType = 1,  //ping,dns,traceroute
-//    TraceRouteType = 2,
+    TraceRouteType = (1 << 4),  //detail in constants.h
     TcpType = (1 << 1),
     HttpType = (1 << 2),
     DefaultType = ((1 << 2) | (1 << 1) | 1),
@@ -55,9 +50,9 @@ static std::map<std::string, NetWorkCheckOperationType> const netCheckTable = {
     {
         "DEFAULT",NetWorkCheckOperationType::DefaultType
     },
-//    {
-//        "TraceRoute",NetWorkCheckOperationType::TraceRouteType
-//    },
+    {
+        "TRACEROUTE",NetWorkCheckOperationType::TraceRouteType
+    },
     {
         "TCP",NetWorkCheckOperationType::TcpType
     },
