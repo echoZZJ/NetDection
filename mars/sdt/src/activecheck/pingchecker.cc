@@ -97,7 +97,7 @@ void PingChecker::__DoCheck(CheckRequestProfile& _check_request) {
 				snprintf(avgrtt, 16, "%f", ping_status.avgrtt);
 
 				profile.loss_rate = loss_rate;
-                profile.rtt_str = (strlen(avgrtt) == 0 ? "0" : std::string(avgrtt));
+                profile.rtt_str = (strlen(avgrtt) == 0 ? "0" : std::string(avgrtt).append("ms"));
 			}
 
 			_check_request.checkresult_profiles.push_back(profile);

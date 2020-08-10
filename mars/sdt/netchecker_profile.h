@@ -27,7 +27,7 @@
 
 #include "mars/sdt/sdt.h"
 #include "mars/sdt/constants.h"
-#include "comm/platform_comm.h"
+#include "mars/comm/platform_comm.h"
 
 
 namespace mars {
@@ -94,7 +94,7 @@ struct CheckResultProfile {
         std::string errorStr = (error_code == 0) ? "success" : "fail";
        
         if(netcheck_type == kPingCheck){
-            return std::string("{") + "\"netcheck_type\":"+ "\""+"PING"+"\""+ "," +"\"error_code\":"+"\""+errorStr+"\""+","+"\"network_type\":"+"\""+netWorkContent()+"\""+","+"\"rtt_str\":"+"\""+rtt_str.substr(0,rtt_str.find(".")+3)+"\""+","+"\"domain_name\":"+"\""+domain_name+"\""+","+"\"ip\":"+"\""+ip+"\""+","+"\"url\":"+"\""+url+"\""+std::string("}");
+            return std::string("{") + "\"netcheck_type\":"+ "\""+"PING"+"\""+ "," +"\"error_code\":"+"\""+errorStr+"\""+","+"\"network_type\":"+"\""+netWorkContent()+"\""+","+"\"loss_rate\":"+"\""+loss_rate.substr(0,loss_rate.find(".")+3)+"\""+","+"\"rtt_str\":"+"\""+rtt_str.substr(0,rtt_str.find(".")+3)+"\""+","+"\"domain_name\":"+"\""+domain_name+"\""+","+"\"ip\":"+"\""+ip+"\""+","+"\"url\":"+"\""+url+"\""+std::string("}");
         }
         if(netcheck_type == kDnsCheck){
             return std::string("{") + "\"netcheck_type\":"+ "\""+ "DNS"+ "\""+"," +"\"error_code\":"+"\""+errorStr+"\""+","+"\"network_type\":"+"\""+netWorkContent()+"\""+","+"\"domain_name\":"+"\""+domain_name+"\""+","+"\"ip\":"+"\""+ip+"\""+","+"\"ip1\":"+"\""+ip1+"\""+","+"\"ip2\":"+"\""+ip2+"\""+","+"\"url\":"+"\""+url+"\""+std::string("}");

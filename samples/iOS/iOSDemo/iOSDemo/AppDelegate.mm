@@ -41,10 +41,11 @@
    
     [[NetworkService sharedInstance] setClientVersion:200];
 //116.85.2.13
-    [[NetworkService sharedInstance] setLongLinkAddress:@"rtm-dichat.xiaojukeji.com" ports:@[@(5230),@(5223)]];
+//    [[NetworkService sharedInstance] setLongLinkAddress:@"rtm-dichat.xiaojukeji.com" ports:@[@(5230),@(5223)]];
+    
 //    [[NetworkService sharedInstance] setLongLinkAddress:@"rtm-dichat.xiaojukeji.com" port:5230];
     
-    [[NetworkService sharedInstance] setLongLinkAddress:@"rtm-dichat.xiaojukeji.com" ports:@[@(5230),@(5223)]];
+//    [[NetworkService sharedInstance] setLongLinkAddress:@"rtm-dichat.xiaojukeji.com" ports:@[@(5230),@(5223)]];
 //    [[NetworkService sharedInstance] setLongLinkAddress:@"long.weixin.qq.com" port:80];
 //    [[NetworkService sharedInstance] setLongLinkAddress:@"localhost" port:8081 debugIP:@"127.0.0.1"];
 //    [[NetworkService sharedInstance] setShortLinkPort:8080];

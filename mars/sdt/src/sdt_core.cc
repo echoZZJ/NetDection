@@ -165,7 +165,6 @@ void SdtCore::__Reset() {
 
 void SdtCore::__RunOn() {
     xinfo_function();
-
     for (std::list<BaseChecker*>::iterator iter = check_list_.begin(); iter != check_list_.end(); ++iter) {
         if (cancel_) {
             xinfo2(TSF"check_request cancel");

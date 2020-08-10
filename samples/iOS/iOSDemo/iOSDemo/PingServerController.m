@@ -54,9 +54,14 @@
 
 //    //检测网络状态
 //    [[NetworkStatus sharedInstance] Start:[NetworkService sharedInstance]];
+    
+//    @"cooper.didiglobal.com",@"vpn.didiglobal.com",@"mail.didiglobal.com"
+    
+    
+    [[NetworkService sharedInstance] setShortLinkHosts:@[@"cooper.didiglobal.com",@"vpn.didiglobal.com",@"mail.didiglobal.com"] ports:@[@(443),@(80)]];
     [[NetworkService sharedInstance] createMars];
-    [[NetworkService sharedInstance] startNetSniffering];
-//    [[NetworkService sharedInstance] startPingCheck];
+//    [[NetworkService sharedInstance] startNetSniffering];
+    [[NetworkService sharedInstance] startPingCheck];
 }
 
 
